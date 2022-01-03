@@ -1,0 +1,7 @@
+tibero=(
+    (INSTANCE=(HOST=192.1.2.215)
+              (PORT=52170)
+              (DB_NAME=tibero)
+    )
+)
+

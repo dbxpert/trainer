@@ -1,0 +1,29 @@
+# -*- shell-script -*-
+# usage:
+# . trenv /path/to/trainer
+#
+
+trainer_root=$1
+export TRAINER_HOME=$trainer_root
+
+if [ ! -d $trainer_root ] || [ "$trainer_root" = "" ]; then
+    echo "No path was provided or invalid for the TRAINER_HOME directory."
+    echo "(The current directory is used for TRAINER_HOME)"
+    trainer_root=`pwd`
+fi
+
+export TRAINER_VERSION=3.0
+
+if expr $- : '.*i.*' >/dev/null 2>&1; then
+    echo "HOME:      $trainer_root"
+    echo "VERSION:   $TRAINER_VERSION"
+fi
+
+alias relpath="python3 -c \"import os.path; print(os.path.relpath(os.getcwd(), '$trainer_root'))\""
+PS1='\[\033[01;32m\][TRAINER]:\[\033[01;34m\] `relpath`\[\033[00m\]\$ '
+alias trainer="rlwrap python3 $trainer_root/src/client/trainer.py"
+alias home="cd $trainer_root"
+
+export LD_LIBRARY_PATH=$trainer_root/src/lib
+export TB_HOME=$trainer_root
+export TB_SID=tibero
