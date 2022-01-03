@@ -7,8 +7,7 @@ class Command(Enum):
     VERSION = "print trainer version"
     BUILD = "build your solution"
     DEBUG = "build your solution in debug mode"
-    RUN = "run your solution with user test cases"
-    SUBMIT = "run your solution with trainer test cases"
+    RUN = "run your solution with trainer testcases"
     QUIT = "exit"
 
 def parse_command(command):

@@ -16,6 +16,6 @@ def python_version_check():
 
 def product_version():
     product_name="Trainer"
-    product_version="2.0"
+    product_version="3.0"
     print(product_name, product_version)
     print()

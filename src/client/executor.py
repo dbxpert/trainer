@@ -50,17 +50,6 @@ def build(debug):
     time.sleep(1)
     communicator.connect()
 
-def run(command):
-    global context
-
-    if not context.compiled:
-        raise Exception("Build your solution first!")
-
-    if not context.server_running:
-        raise Exception("Build your solution first!")
-
-    run_test(command)
-
 def quit():
     global context
 
@@ -77,8 +66,7 @@ action = {
     Command.VERSION : product_version,
     Command.BUILD : lambda: build(False),
     Command.DEBUG : lambda: build(True),
-    Command.RUN : lambda: run_test(Command.RUN),
-    Command.SUBMIT : lambda: run_test(Command.SUBMIT),
+    Command.RUN : run_test,
     Command.QUIT : quit
 }
 
