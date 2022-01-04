@@ -1,20 +1,10 @@
-# no .a files
-*.a
-
-# no .o files
-*.o
-
-# no .d files
-*.d
-
-# no .out files
-*.out
-
 # tag file
 tags
 
-# binary
-trainer
+# directories 
+build
+lib
+bin
 
 # python
 __pycache__

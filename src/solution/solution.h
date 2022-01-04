@@ -1,0 +1,6 @@
+#ifndef EXECUTOR_TRAINER_SOLUTION_H_
+#define EXECUTOR_TRAINER_SOLUTION_H_
+
+int solution();
+
+#endif /* EXECUTOR_TRAINER_SOLUTION_H_ */

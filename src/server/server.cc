@@ -4,6 +4,7 @@
 #include <cctype> // for upper
 #include <fstream> // for ifstream
 #include <stdexcept>
+#include <climits>
 #include "server.h"
 #include "run_test.h"
 
@@ -21,7 +22,7 @@ static inline unsigned int SearchLineForPortNumber(const std::string &line) {
 
 static inline unsigned int GetPortFromConfig() {
   auto trainer_home = std::string(std::getenv("TRAINER_HOME"));
-  auto config_path = trainer_home + "client/config/trainer.cfg";
+  auto config_path = trainer_home + "/client/config/trainer.cfg";
   std::ifstream config(config_path);
 
   if (!config.is_open()) {

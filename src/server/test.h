@@ -3,7 +3,7 @@
 
 #include <functional>
 #include <vector>
-#include "common.h"
+#include "table.h"
 #include "test_result.h"
 #include "database_connector.h"
 #include "problem_loader.h"

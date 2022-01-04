@@ -2,7 +2,7 @@
 #define EXECUTOR_TRAINER_PROBLEM_LOADER_H_
 
 #include <vector>
-#include "common.h"
+#include "table.h"
 #include "database_connector.h"
 
 class ProblemLoader {

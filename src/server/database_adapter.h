@@ -5,7 +5,7 @@
 #include <vector>
 #include "../include/sqlcli.h"
 #include "../include/sqlcli_ext.h"
-#include "common.h"
+#include "table.h"
 
 #define INT2PTR(x)      ((void *) ((ptrdiff_t) (x))) 
 

@@ -2,7 +2,7 @@
 #define EXECUTOR_TRAINER_DATABASE_LODAER_H_
 
 #include <string>
-#include "common.h"
+#include "table.h"
 #include "database_adapter.h"
 #include "database_connector.h"
 
