@@ -1,13 +1,8 @@
 import os
 from pathlib import Path
 
-def search_from_root(name):
-    for path, dirs, files in os.walk("/"):
-        if name in dirs:
-            return os.path.join(path, name)
-
 def get_project_home_path():
-    return search_from_root("trainer")
+    return os.environ['TRAINER_HOME']
 
 def get_build_path():
     return os.path.join(get_project_home_path(), "build")

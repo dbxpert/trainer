@@ -127,7 +127,7 @@ void Server::Send(std::string msg) {
   int msg_size = msg.size();
   std::vector<unsigned char> byte_array;
 
-  for (int i = 0; i < sizeof(int); ++i) {
+  for (std::size_t i = 0; i < sizeof(int); ++i) {
     byte_array.push_back(msg_size & 0xFF);     
     msg_size >>= CHAR_BIT;
   }

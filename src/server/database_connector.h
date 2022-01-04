@@ -1,8 +1,8 @@
 #ifndef EXECUTOR_TRAINER_DATABASE_CONNECTOR_H_
 #define EXECUTOR_TRAINER_DATABASE_CONNECTOR_H_
 
-#include "../include/sqlcli.h"
-#include "../include/sqlcli_ext.h"
+#include "include/sqlcli.h"
+#include "include/sqlcli_ext.h"
 #include <stdexcept>
 
 class DatabaseConnector final {

@@ -5,3 +5,6 @@ set(TRAINER_SERVER_SOURCE ${TRAINER_SERVER_SOURCE_FILES})
 set(TRAINER_SERVER_LIBRARY server)
 add_library(${TRAINER_SERVER_LIBRARY} ${TRAINER_SERVER_SOURCE})
 
+if (BUILD_UNIT_TESTS)
+  add_subdirectory(unit_tests)
+endif()

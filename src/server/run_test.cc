@@ -24,13 +24,13 @@ static inline std::string SerializeTestResult(TestResult result) {
   byte_array.push_back('1');
 
   auto user_time = result.user_elapse_time;
-  for (int i = 0; i < sizeof(decltype(user_time)); ++i) {
+  for (std::size_t i = 0; i < sizeof(decltype(user_time)); ++i) {
     byte_array.push_back(user_time & 0xFF);
     user_time >>= CHAR_BIT;
   }
 
   auto pm_time = result.pace_maker_elapse_time;
-  for (int i = 0; i < sizeof(decltype(pm_time)); ++i) {
+  for (std::size_t i = 0; i < sizeof(decltype(pm_time)); ++i) {
     byte_array.push_back(pm_time & 0xFF);
     pm_time >>= CHAR_BIT;
   }

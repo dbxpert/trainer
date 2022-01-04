@@ -15,7 +15,7 @@ void ProblemLoader::Connect() {
 
 static inline std::vector<bool> GenerateFetchInfo(std::vector<int> fetch_result) {
   std::vector<bool> fetch_info(fetch_result.size() - 1);
-  for (int i = 1; i < fetch_result.size(); ++i) {
+  for (std::size_t i = 1; i < fetch_result.size(); ++i) {
     if (fetch_result[i] == 1)
       fetch_info[i] = true;
     else
@@ -48,7 +48,7 @@ static inline std::string GenerateFetchQuery(int table_idx) {
 void ProblemLoader::LoadInputTables(std::vector<bool> fetch_info) {
   DatabaseLoader loader(connector_);
 
-  for (int i = 0; i < fetch_info.size(); ++i) {
+  for (std::size_t i = 0; i < fetch_info.size(); ++i) {
     if (!fetch_info[i])
       continue;
 

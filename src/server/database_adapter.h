@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <vector>
-#include "../include/sqlcli.h"
-#include "../include/sqlcli_ext.h"
+#include "include/sqlcli.h"
+#include "include/sqlcli_ext.h"
 #include "table.h"
 
 #define INT2PTR(x)      ((void *) ((ptrdiff_t) (x))) 
