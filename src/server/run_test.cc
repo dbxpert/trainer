@@ -5,11 +5,12 @@
 #include "test.h"
 #include "run_test.h"
 
-static inline std::string SerializeErrorMessage(std::string error) {
-  std::vector<unsigned char> byte_array;
+static constexpr char ERROR_MESSAGE_HEADER = '0';
+static constexpr char TEST_RESULT_MESSAGGE_HEADER = '1';
 
-  // flag for success
-  byte_array.push_back('0');
+static inline std::string SerializeErrorMessage(std::string error) {
+  std::vector<unsigned char> byte_array{ERROR_MESSAGE_HEADER};
+  
   for (auto c : error) {
     byte_array.push_back(c); 
   }
@@ -17,24 +18,18 @@ static inline std::string SerializeErrorMessage(std::string error) {
   return std::string(byte_array.begin(), byte_array.end());
 }
 
+static inline void SerializeElapseTime(std::vector<unsigned char> &byte_array, long elapse_time) {
+  for (std::size_t i = 0; i < sizeof(decltype(elapse_time)); ++i) {
+    byte_array.push_back(elapse_time & 0xFF);
+    elapse_time >>= CHAR_BIT;
+  }
+}
+
 static inline std::string SerializeTestResult(TestResult result) {
-  std::vector<unsigned char> byte_array;
+  std::vector<unsigned char> byte_array{TEST_RESULT_MESSAGGE_HEADER};
 
-  // flag for success
-  byte_array.push_back('1');
-
-  auto user_time = result.user_elapse_time;
-  for (std::size_t i = 0; i < sizeof(decltype(user_time)); ++i) {
-    byte_array.push_back(user_time & 0xFF);
-    user_time >>= CHAR_BIT;
-  }
-
-  auto pm_time = result.pace_maker_elapse_time;
-  for (std::size_t i = 0; i < sizeof(decltype(pm_time)); ++i) {
-    byte_array.push_back(pm_time & 0xFF);
-    pm_time >>= CHAR_BIT;
-  }
-
+  SerializeElapseTime(byte_array, result.user_elapse_time);
+  SerializeElapseTime(byte_array, result.pace_maker_elapse_time);
   byte_array.push_back(static_cast<unsigned char>(result.success));
 
   return std::string(byte_array.begin(), byte_array.end());

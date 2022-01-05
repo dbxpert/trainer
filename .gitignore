@@ -8,3 +8,6 @@ bin
 
 # python
 __pycache__
+
+# vscode 
+.vscode

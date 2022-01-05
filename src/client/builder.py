@@ -8,11 +8,11 @@ class Builder:
         if os.path.isfile(os.path.join(get_project_home_path(), "CMakeLists.txt")):
             os.chdir(get_build_path())
             if debug:
-                p = subprocess.run(["cmake", "--DCMAKE_BUILD_TYPE=Debug", ".."])
+                p = subprocess.run(["cmake", "-DCMAKE_BUILD_TYPE=Debug", "-DBUILD_UNIT_TESTS=OFF", ".."])
                 if p.returncode != 0:
                     raise Exception("Build failed")
             else:
-                p = subprocess.run(["cmake", "--DCMAKE_BUILD_TYPE=Release", ".."])
+                p = subprocess.run(["cmake", "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_UNIT_TESTS=OFF", ".."])
                 if p.returncode != 0:
                     raise Exception("Build failed")
 

@@ -22,8 +22,6 @@ class Server {
 		void Send(std::string msg);
 		void Process(std::vector<std::string> args);
 
-		const static unsigned int BUF_SIZE = 1024;
-
 		bool running_;
 		int socket_fd_;
 		int accepted_fd_;
@@ -32,6 +30,7 @@ class Server {
 		struct sockaddr_in host_addr_;
 		struct sockaddr_in client_addr_;
 
+		const static unsigned int BUF_SIZE = 1024;
 		char buffer_[BUF_SIZE];
 };
 

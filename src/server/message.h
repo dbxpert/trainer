@@ -7,13 +7,10 @@
 
 class Message {
   public:
-    using arguement_type = std::vector<std::string>;
-
-    Message() = default;
     explicit Message(char* msg) : msg_(msg) { Parse(); };
     ~Message() = default;
 
-    arguement_type GetArgs() { return args_; }
+    const std::vector<std::string> &GetArgs() const { return args_; }
 
   private:
     void Parse() {
@@ -26,8 +23,8 @@ class Message {
       }
     }
 
-    std::string msg_;
-    arguement_type args_;
+    const std::string msg_;
+    std::vector<std::string> args_;
 };
 
 

@@ -8,19 +8,37 @@
 #include "server.h"
 #include "run_test.h"
 
+static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
+
 static inline unsigned int SearchLineForPortNumber(const std::string &line) {
   auto pos = line.find("=");
+
   if (pos != std::string::npos) {
     auto key = line.substr(0, pos);
     if (key.compare("PORT_NUMBER") == 0) {
       return std::stol(line.substr(pos + 1));
     }
   }
-  
-  return UINT32_MAX;
+ 
+  return INVALID_PORT_NUMBER;  
 }
 
-static inline unsigned int GetPortFromConfig() {
+static inline unsigned int SearchConfigForPortNumber(std::ifstream &config) {
+  std::string line;
+  unsigned int port_number = INVALID_PORT_NUMBER;
+  
+  while (getline(config, line)) {
+    port_number = SearchLineForPortNumber(line);   
+  }
+
+  if (port_number == INVALID_PORT_NUMBER) {
+    throw std::runtime_error("Cannot find option PORT_NUMBER");
+  }
+
+  return port_number;
+}
+
+static inline std::ifstream GetConfig() {
   auto trainer_home = std::string(std::getenv("TRAINER_HOME"));
   auto config_path = trainer_home + "/client/config/trainer.cfg";
   std::ifstream config(config_path);
@@ -28,18 +46,12 @@ static inline unsigned int GetPortFromConfig() {
   if (!config.is_open()) {
     throw std::runtime_error("Cannot open file: " + config_path);
   }
+  return config;
+}
 
-  std::string line;
-  unsigned int port_number = UINT32_MAX;
-  while (getline(config, line)) {
-    port_number = SearchLineForPortNumber(line);
-  }
-
-  if (port_number == UINT32_MAX) {
-    throw std::runtime_error("Cannot find option PORT_NUMBER");
-  }
-
-  return port_number;
+static inline unsigned int GetPortFromConfig() {
+  auto config = GetConfig();
+  return SearchConfigForPortNumber(config);
 }
 
 Server::Server() 
@@ -137,4 +149,3 @@ void Server::Send(std::string msg) {
   send(accepted_fd_, header.c_str(), header.size(), 0);
   send(accepted_fd_, msg.c_str(), msg.size(), 0);
 }
-
