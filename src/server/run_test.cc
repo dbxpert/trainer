@@ -35,12 +35,12 @@ static inline std::string SerializeTestResult(TestResult result) {
   return std::string(byte_array.begin(), byte_array.end());
 }
 
-std::string RunTest(unsigned int problem_number) {
+std::string RunTest(const SQLHDBC connection, unsigned int problem_number) {
   Test test;
   std::string result;
 
   try {
-    auto test_result = test.Run(problem_number);
+    auto test_result = test.Run(connection, problem_number);
     result = SerializeTestResult(test_result);
   } catch (const std::runtime_error &e) {
     result = SerializeErrorMessage(std::string(e.what()));

@@ -1,9 +1,9 @@
 #include "database_loader.h"
 
-Table DatabaseLoader::Load() {
+Table DatabaseLoader::Load(const SQLHDBC connection) {
   Table table;
 
-  adapter_.Execute(sql_.c_str(), connector_.GetConnection());
+  adapter_.Execute(sql_.c_str(), connection);
 
   while (true) {
     auto row_array = adapter_.Fetch();

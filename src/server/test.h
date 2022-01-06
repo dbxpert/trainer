@@ -5,20 +5,21 @@
 #include <vector>
 #include "table.h"
 #include "test_result.h"
-#include "database_connector.h"
 #include "problem_loader.h"
+#include "include/sqlcli.h"
+#include "include/sqlcli_ext.h"
 
 class Test {
  public:
   Test() = default;
-  ~Test();
+  ~Test() = default;
 
-  TestResult Run(unsigned int problem_number);
+  TestResult Run(const SQLHDBC connection, unsigned int problem_number);
 
  private:
   using solution_func_type = std::function<Table(std::vector<Table>)>;
 
-  void Prepare(unsigned int problem_number);
+  void Prepare(const SQLHDBC connection, unsigned int problem_number);
   long CallSolutionFunction(solution_func_type);
 
   ProblemLoader problem_loader_;

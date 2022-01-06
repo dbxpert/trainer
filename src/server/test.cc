@@ -4,9 +4,6 @@
 #include "test.h"
 #include "database_loader.h"
 
-Test::~Test() {
-}
-  
 static inline bool CheckResult(Table result, Table answer) {
   if (result.size() != answer.size())
     return false;
@@ -20,8 +17,8 @@ static inline bool CheckResult(Table result, Table answer) {
   });
 }
 
-TestResult Test::Run(unsigned int problem_number) {
-  Prepare(problem_number);
+TestResult Test::Run(const SQLHDBC connection, unsigned int problem_number) {
+  Prepare(connection, problem_number);
 
   auto user_elapsed = CallSolutionFunction(user_solution_);
   auto pace_maker_elapsed = CallSolutionFunction(pace_maker_solution_);
@@ -30,8 +27,8 @@ TestResult Test::Run(unsigned int problem_number) {
   return TestResult{user_elapsed, pace_maker_elapsed, correct};
 }
 
-void Test::Prepare(unsigned int problem_number) {
-  problem_loader_.Load(problem_number);
+void Test::Prepare(const SQLHDBC connection, unsigned int problem_number) {
+  problem_loader_.Load(connection, problem_number);
   
   std::vector<solution_func_type> pace_maker_solutions = {};
   std::vector<solution_func_type> user_solutions = {};

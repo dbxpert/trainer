@@ -4,21 +4,19 @@
 #include <string>
 #include "table.h"
 #include "database_adapter.h"
-#include "database_connector.h"
+#include "include/sqlcli.h"
+#include "include/sqlcli_ext.h"
 
 class DatabaseLoader {
   public:
-    DatabaseLoader(const DatabaseConnector &connector) : connector_(connector) {} 
-    DatabaseLoader(const DatabaseLoader& other) = delete;
-    DatabaseLoader& operator=(const DatabaseLoader& other) = delete;
+    DatabaseLoader() = default;
     ~DatabaseLoader() = default;
     
-    Table Load();
+    Table Load(const SQLHDBC connection);
     void SetSql(std::string sql) { sql_ = sql; }
     
   private:
     DatabaseAdapter adapter_;
-    const DatabaseConnector &connector_;
     std::string sql_;
 };
 

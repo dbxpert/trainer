@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include "message.h"
+#include "database_connector.h"
 
 class Server {
 	public:
@@ -32,6 +33,8 @@ class Server {
 
 		const static unsigned int BUF_SIZE = 1024;
 		char buffer_[BUF_SIZE];
+
+		DatabaseConnector database_connector_;
 };
 
 #endif /* EXECUTOR_TRAINER_SERVER_H_ */

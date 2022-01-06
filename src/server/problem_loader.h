@@ -3,24 +3,23 @@
 
 #include <vector>
 #include "table.h"
-#include "database_connector.h"
+#include "include/sqlcli.h"
+#include "include/sqlcli_ext.h"
 
 class ProblemLoader {
   public:
     ProblemLoader() = default;
     ~ProblemLoader() = default;
 
-    void Load(unsigned int problem_number);
+    void Load(const SQLHDBC connection, unsigned int problem_number);
     const std::vector<Table> &GetInputTables() const {
       return input_tables_;
     }
 
   private:
-    void Connect();
-    std::vector<bool> SearchProblemTable(unsigned int problem_number);
-    void LoadInputTables(std::vector<bool> fetch_info);
+    std::vector<bool> SearchProblemTable(const SQLHDBC connection, unsigned int problem_number);
+    void LoadInputTables(const SQLHDBC connection, std::vector<bool> fetch_info);
 
-    DatabaseConnector connector_;
     std::vector<Table> input_tables_;
 };
 

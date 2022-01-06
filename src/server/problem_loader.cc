@@ -1,16 +1,11 @@
 #include <string>
+#include <stdexcept>
 #include "problem_loader.h"
 #include "database_loader.h"
 
-void ProblemLoader::Load(unsigned int problem_number) {
-  Connect();
-  LoadInputTables(SearchProblemTable(problem_number));
-}
-
-void ProblemLoader::Connect() {
-  if (!connector_.Connect()) {
-    throw std::runtime_error("Database Connection failed");
-  }
+void ProblemLoader::Load(const SQLHDBC connection, unsigned int problem_number) {
+  auto fetch_info = SearchProblemTable(connection, problem_number);
+  LoadInputTables(connection, fetch_info);
 }
 
 static inline std::vector<bool> GenerateFetchInfo(std::vector<int> fetch_result) {
@@ -25,12 +20,12 @@ static inline std::vector<bool> GenerateFetchInfo(std::vector<int> fetch_result)
   return fetch_info;
 }
 
-std::vector<bool> ProblemLoader::SearchProblemTable(unsigned int problem_number) {
-  DatabaseLoader loader(connector_);
+std::vector<bool> ProblemLoader::SearchProblemTable(const SQLHDBC connection, unsigned int problem_number) {
+  DatabaseLoader loader;
   std::string query("select * from problem_table where problem_number = ");
   loader.SetSql(query + std::to_string(problem_number) + ";");
 
-  auto problem_info = loader.Load();
+  auto problem_info = loader.Load(connection);
 
   if (problem_info.empty()) {
     throw std::runtime_error("No such problem");
@@ -45,8 +40,8 @@ static inline std::string GenerateFetchQuery(int table_idx) {
   return query + table_names[table_idx] + ";";
 }
 
-void ProblemLoader::LoadInputTables(std::vector<bool> fetch_info) {
-  DatabaseLoader loader(connector_);
+void ProblemLoader::LoadInputTables(const SQLHDBC connection, std::vector<bool> fetch_info) {
+  DatabaseLoader loader;
 
   for (std::size_t i = 0; i < fetch_info.size(); ++i) {
     if (!fetch_info[i])
@@ -54,6 +49,6 @@ void ProblemLoader::LoadInputTables(std::vector<bool> fetch_info) {
 
     auto query = GenerateFetchQuery(i);
     loader.SetSql(query);
-    input_tables_.push_back(loader.Load());
+    input_tables_.push_back(loader.Load(connection));
   }
 }

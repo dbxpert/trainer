@@ -1,12 +1,15 @@
-#include <algorithm> // for upper
-#include <cstdlib> // for getenv
-#include <cstring> // for memset
-#include <cctype> // for upper
-#include <fstream> // for ifstream
-#include <stdexcept>
-#include <climits>
 #include "server.h"
 #include "run_test.h"
+#include <algorithm> // for upper
+#include <cctype>    // for upper
+#include <climits>
+#include <cstdlib> // for getenv
+#include <cstring> // for memset
+#include <fstream> // for ifstream
+#include <iostream>
+#include <stdexcept>
+#include <termios.h>
+#include <unistd.h>
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
@@ -54,11 +57,45 @@ static inline unsigned int GetPortFromConfig() {
   return SearchConfigForPortNumber(config);
 }
 
+static inline void HideUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag &= ~ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline void ShowUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag |= ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline std::string GetUserPassword() {
+  std::string password;
+  std::cout << "Enter Password: ";
+
+  HideUserInput();
+  std::cin >> password;
+  ShowUserInput();
+  std::cout << std::endl;
+
+  return password;
+}
+
+static inline std::string GetUserName() {
+  std::string user;
+  std::cout << "Enter Username: ";
+  std::cin >> user;
+  return user;
+}
+
 Server::Server() 
   : running_(true),
     socket_fd_(socket(PF_INET, SOCK_STREAM, 0)),
     accepted_fd_(0),
-    size_(sizeof(struct sockaddr_in)) {
+    size_(sizeof(struct sockaddr_in)),
+    database_connector_(GetUserName(), GetUserPassword()) {
   host_addr_.sin_family = AF_INET;
   host_addr_.sin_port = htons(GetPortFromConfig());
   host_addr_.sin_addr.s_addr = 0;
@@ -125,8 +162,12 @@ void Server::Process(std::vector<std::string> args) {
     auto command = Upper(args[0]);
 
     if (command.compare("RUN")) {
+      if (!database_connector_.IsConnected()) {
+        throw std::runtime_error("Database connection error");
+      }
+
       auto problem = std::stol(args[1]);
-      auto result = RunTest(problem);
+      auto result = RunTest(database_connector_.GetConnection(), problem);
       Send(result);
     } else if (command.compare("TERMINATE")) {
       running_ = false;
