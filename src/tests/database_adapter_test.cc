@@ -4,13 +4,15 @@
 #include <iostream>
 
 TEST(DatabaseAdapterTest, execute_sql) {
-  DatabaseConnector connector("gtest_user", "gtest_user");
+  DatabaseConnector connector;
+  connector.Connect("gtest_user", "gtest_user");
   DatabaseAdapter adapter;
   EXPECT_TRUE(adapter.Execute("SELECT * FROM DUAL;", connector.GetConnection()));
 }
 
 TEST(DatabaseAdapterTest, execute_and_fetch_data) {
-  DatabaseConnector connector("gtest_user", "gtest_user");
+  DatabaseConnector connector;
+  connector.Connect("gtest_user", "gtest_user");
   DatabaseAdapter adapter;
 
   int row_cnt = 0;
@@ -26,5 +28,6 @@ TEST(DatabaseAdapterTest, execute_and_fetch_data) {
     auto result = adapter.Fetch();
     actual_count = result[0][0];
   }
+
   EXPECT_EQ(row_cnt, actual_count);
 }

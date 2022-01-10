@@ -7,15 +7,15 @@
 
 class DatabaseConnector final {
   public:
-    explicit DatabaseConnector(std::string &&user, std::string &&password);
+    DatabaseConnector();
     ~DatabaseConnector(); 
 
+    bool Connect(std::string user, std::string password);
     const bool IsConnected() const;
     const SQLHDBC GetConnection() const; 
 
   private:
     void GetUserInfo();
-    bool Connect(std::string &&user, std::string &&password);
     bool Disconnect();
 
     SQLHENV henv_;

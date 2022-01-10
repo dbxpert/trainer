@@ -1,5 +1,6 @@
 #include "database_connector.h"
 #include <stdexcept>
+#include <cassert>
 #include <iostream>
 #include <cstring>
 
@@ -12,24 +13,16 @@ static inline bool CallCLIFunction(Function f, Args... args) {
   return rc == SQL_SUCCESS;
 }
 
-DatabaseConnector::DatabaseConnector(std::string &&user, std::string &&password) 
+DatabaseConnector::DatabaseConnector() 
   : henv_(UNINITIALIZED_HANDLE_VALUE),
     hdbc_(UNINITIALIZED_HANDLE_VALUE),
     connected_(false) { 
-  if (!Connect(std::move(user), std::move(password))) {
-    if (hdbc_ != UNINITIALIZED_HANDLE_VALUE) {
-      CallCLIFunction(SQLFreeConnect, hdbc_);
-    }
-
-    if (henv_ != UNINITIALIZED_HANDLE_VALUE) {
-      CallCLIFunction(SQLFreeEnv, henv_);
-    }
-  }
 }
 
 DatabaseConnector::~DatabaseConnector() {
   if (connected_) {
-    Disconnect();
+    if (!Disconnect())
+      assert("Error occurred while disconnecting from problem database");
   }
 }
 
@@ -37,17 +30,21 @@ bool DatabaseConnector::Disconnect() {
   if (!connected_)
     return true;
 
-  if (!CallCLIFunction(SQLFreeConnect, hdbc_))
-    return false;
-  
-  if (!CallCLIFunction(SQLFreeEnv, henv_))
-    return false;
-  
+  if (hdbc_ != UNINITIALIZED_HANDLE_VALUE) {
+    if (!CallCLIFunction(SQLFreeConnect, hdbc_))
+      return false;
+  }
+
+  if (henv_ != UNINITIALIZED_HANDLE_VALUE) {
+    if (!CallCLIFunction(SQLFreeEnv, henv_))
+      return false;
+  }
+ 
   connected_ = false;
   return true;
 }
 
-bool DatabaseConnector::Connect(std::string &&user, std::string &&password) {
+bool DatabaseConnector::Connect(std::string user, std::string password) {
   if (connected_)
     return true;
 

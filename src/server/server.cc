@@ -13,6 +13,12 @@
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
+enum class Command {
+  RUN,
+  TERMINATE,
+  UNKNOWN
+};
+
 static inline unsigned int SearchLineForPortNumber(const std::string &line) {
   auto pos = line.find("=");
 
@@ -57,45 +63,11 @@ static inline unsigned int GetPortFromConfig() {
   return SearchConfigForPortNumber(config);
 }
 
-static inline void HideUserInput() {
-  termios tty;
-  tcgetattr(STDIN_FILENO, &tty);
-  tty.c_lflag &= ~ECHO;
-  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-}
-
-static inline void ShowUserInput() {
-  termios tty;
-  tcgetattr(STDIN_FILENO, &tty);
-  tty.c_lflag |= ECHO;
-  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-}
-
-static inline std::string GetUserPassword() {
-  std::string password;
-  std::cout << "Enter Password: ";
-
-  HideUserInput();
-  std::cin >> password;
-  ShowUserInput();
-  std::cout << std::endl;
-
-  return password;
-}
-
-static inline std::string GetUserName() {
-  std::string user;
-  std::cout << "Enter Username: ";
-  std::cin >> user;
-  return user;
-}
-
 Server::Server() 
   : running_(true),
     socket_fd_(socket(PF_INET, SOCK_STREAM, 0)),
     accepted_fd_(0),
-    size_(sizeof(struct sockaddr_in)),
-    database_connector_(GetUserName(), GetUserPassword()) {
+    size_(sizeof(struct sockaddr_in)) {
   host_addr_.sin_family = AF_INET;
   host_addr_.sin_port = htons(GetPortFromConfig());
   host_addr_.sin_addr.s_addr = 0;
@@ -153,27 +125,77 @@ Message Server::Receive() {
   return Message(buffer_);
 }
 
-static inline std::string Upper(std::string str) {
-  std::transform(str.begin(), str.end(), str.begin(), ::toupper);
-  return str;
+static inline void HideUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag &= ~ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline void ShowUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag |= ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline std::string GetUserPassword() {
+  std::string password;
+  std::cout << "Enter Password: ";
+
+  HideUserInput();
+  std::cin >> password;
+  ShowUserInput();
+  std::cout << std::endl;
+
+  return password;
+}
+
+static inline std::string GetUserName() {
+  std::string user;
+  std::cout << "Enter Username: ";
+  std::cin >> user;
+  return user;
+}
+
+static inline void ConnectToProblemDatabase(DatabaseConnector &database_connector) {
+  if (!database_connector.IsConnected()) {
+    auto user = GetUserName();
+    auto password = GetUserPassword();
+    if (database_connector.Connect(user, password))
+      throw std::runtime_error("Database connection error");
+  }
+}
+
+static inline Command InterpretRequest(std::string request) {
+  std::transform(request.begin(), request.end(), request.begin(), ::toupper);
+  auto interpreted_command = Command::UNKNOWN;
+
+  if (request.compare("RUN")) {
+    interpreted_command = Command::RUN;
+  } else if (request.compare("TERMINATE")) {
+    interpreted_command = Command::TERMINATE;
+  } 
+
+  return interpreted_command;
 }
 
 void Server::Process(std::vector<std::string> args) {
-    auto command = Upper(args[0]);
+  auto command = InterpretRequest(args[0]); 
 
-    if (command.compare("RUN")) {
-      if (!database_connector_.IsConnected()) {
-        throw std::runtime_error("Database connection error");
-      }
-
-      auto problem = std::stol(args[1]);
-      auto result = RunTest(database_connector_.GetConnection(), problem);
-      Send(result);
-    } else if (command.compare("TERMINATE")) {
+  switch (command) {
+    case Command::RUN:
+      ConnectToProblemDatabase(database_connector_);
+      Send(RunTest(database_connector_.GetConnection(), std::stol(args[1])));
+      break;
+    case Command::TERMINATE:
       running_ = false;
-    } else {
+      break;
+    case Command::UNKNOWN:
+    default:
       Send("0Server received invalid command");
-    }
+      break;
+  }
 }
 
 void Server::Send(std::string msg) {
