@@ -1,6 +1,18 @@
 #include "database_adapter.h"
 #include <vector>
+#include <array>
 #include <stdexcept>
+
+void DatabaseAdapter::SetSQL(const std::string &sql) { 
+  sql_ = sql; 
+}
+
+Table DatabaseAdapter::Load(const SQLHDBC connection) {
+  if (!Execute(sql_.c_str(), connection)) {
+    std::runtime_error("Database adapter error");
+  }  
+  return Fetch();
+}
 
 static inline constexpr void *INT2PTR(int x) {
   return reinterpret_cast<void *>(static_cast<ptrdiff_t>(x));
@@ -35,12 +47,12 @@ Table DatabaseAdapter::Fetch() {
   if (!CallCLIFunction(SQLNumResultCols, hstmt_, &col_cnt))
     throw std::runtime_error("Database adapter error");
 
-  SQLINTEGER col[col_cnt][ROW_ARRAY_SIZE];
   if (!CallCLIFunction(SQLSetStmtAttr, hstmt_, SQL_ATTR_ROW_ARRAY_SIZE, INT2PTR(ROW_ARRAY_SIZE), 0))
     throw std::runtime_error("Database adapter error");
 
+  SQLREAL col[col_cnt][ROW_ARRAY_SIZE];
   for (int i = 0; i < col_cnt; ++i) {
-    if (!CallCLIFunction(SQLBindCol, hstmt_, i + 1, SQL_INTEGER, &col[i], sizeof(SQLINTEGER), nullptr))
+    if (!CallCLIFunction(SQLBindCol, hstmt_, i + 1, SQL_REAL, &col[i], sizeof(SQLREAL), nullptr))
       throw std::runtime_error("Database adapter error"); 
   }
 
@@ -51,12 +63,9 @@ Table DatabaseAdapter::Fetch() {
   fetch_finished_ = (row_cnt < ROW_ARRAY_SIZE);
 
   Table result_table;
-  for (int row_num = 0; row_num < static_cast<int>(row_cnt); ++row_num) {
-    std::vector<int> row;
-    for (int col_num = 0; col_num < col_cnt; ++col_num) {
-      row.push_back(col[col_num][row_num]);
-    }
-    result_table.push_back(row);
+  for (int col_num = 0; col_num < col_cnt; ++col_num) {
+    std::vector<float> column(*col[col_num], col[col_num][row_cnt]);
+    result_table.push_back(column);
   }
 
   return result_table;

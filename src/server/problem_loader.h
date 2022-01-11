@@ -8,7 +8,7 @@
 
 class ProblemLoader {
   public:
-    ProblemLoader() = default;
+    ProblemLoader();
     ~ProblemLoader() = default;
 
     void Load(const SQLHDBC connection, unsigned int problem_number);

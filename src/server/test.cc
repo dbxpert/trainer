@@ -2,7 +2,6 @@
 #include <stdexcept>
 #include <chrono>
 #include "test.h"
-#include "database_loader.h"
 
 static inline bool CheckResult(Table result, Table answer) {
   if (result.size() != answer.size())
@@ -12,7 +11,7 @@ static inline bool CheckResult(Table result, Table answer) {
   std::sort(answer.begin(), answer.end());
 
   return std::equal(result.begin(), result.end(), answer.begin(),
-  [](const std::vector<int> &x, const std::vector<int> &y){
+  [](const std::vector<float> &x, const std::vector<float> &y){
     return x[0] == y[0];
   });
 }

@@ -4,6 +4,7 @@
 #include "include/sqlcli.h"
 #include "include/sqlcli_ext.h"
 #include "table.h"
+#include <string>
 
 class DatabaseAdapter final {
   public:
@@ -12,11 +13,15 @@ class DatabaseAdapter final {
     DatabaseAdapter &operator=(const DatabaseAdapter &) = delete;
     ~DatabaseAdapter() = default;
 
-    bool Execute(const char *sql, SQLHDBC hdbc);
+    void SetSQL(const std::string &sql);
+    Table Load(const SQLHDBC connection);
     bool FetchFinished() const;
+
+   private:
+    bool Execute(const char *sql, SQLHDBC hdbc);
     Table Fetch();
 
-  private:
+    std::string sql_;
     SQLHSTMT hstmt_;
     bool fetch_finished_ = true;
 };
