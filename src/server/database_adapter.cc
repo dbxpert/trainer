@@ -46,7 +46,7 @@ Table DatabaseAdapter::Fetch() {
 
   SQLUINTEGER row_cnt;
   if (!CallCLIFunction(SQLExtendedFetch, hstmt_, SQL_FETCH_NEXT, 0, &row_cnt, nullptr))
-    throw std::runtime_error("Database adapter error"); 
+    return Table();
 
   fetch_finished_ = (row_cnt < ROW_ARRAY_SIZE);
 

@@ -12,9 +12,11 @@ class ProblemLoader {
     ~ProblemLoader() = default;
 
     void Load(const SQLHDBC connection, unsigned int problem_number);
-    const std::vector<Table> &GetInputTables() const {
-      return input_tables_;
-    }
+    const std::vector<Table> &GetInputTables() const { return input_tables_; }
+
+    static constexpr unsigned int MINIMUM_NUMBER = 1;
+    static constexpr unsigned int MAXIMUM_NUMBER = 10;
+    static constexpr unsigned int TABLE_COUNT = 8;
 
   private:
     std::vector<bool> SearchProblemTable(const SQLHDBC connection, unsigned int problem_number);

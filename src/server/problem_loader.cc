@@ -1,10 +1,18 @@
 #include <string>
 #include <stdexcept>
+#include <cassert>
 #include "problem_loader.h"
 #include "database_loader.h"
 
 void ProblemLoader::Load(const SQLHDBC connection, unsigned int problem_number) {
-  auto fetch_info = SearchProblemTable(connection, problem_number);
+  std::vector<bool> fetch_info;
+  try {
+    fetch_info = SearchProblemTable(connection, problem_number);
+  } catch (const std::runtime_error &e) {
+    std::string what(e.what());
+    if (what.compare("No such problem") == 0)
+      assert(false && "No such problem");
+  }
   LoadInputTables(connection, fetch_info);
 }
 
@@ -12,9 +20,9 @@ static inline std::vector<bool> GenerateFetchInfo(std::vector<int> fetch_result)
   std::vector<bool> fetch_info(fetch_result.size() - 1);
   for (std::size_t i = 1; i < fetch_result.size(); ++i) {
     if (fetch_result[i] == 1)
-      fetch_info[i] = true;
+      fetch_info[i - 1] = true;
     else
-      fetch_info[i] = false;
+      fetch_info[i - 1] = false;
   } 
 
   return fetch_info;
@@ -34,8 +42,9 @@ std::vector<bool> ProblemLoader::SearchProblemTable(const SQLHDBC connection, un
   return GenerateFetchInfo(problem_info[0]);
 }
 
-static inline std::string GenerateFetchQuery(int table_idx) { 
-  std::vector<std::string> table_names = {};
+static inline std::string GenerateFetchQuery(int table_idx) {
+  std::vector<std::string> table_names = {"CUSTOMER", "LINEITEM", "NATION", "ORDERS",
+                                          "PART",     "PARTSUPP", "REGION", "SUPPLIER"};
   std::string query("select * from ");
   return query + table_names[table_idx] + ";";
 }
