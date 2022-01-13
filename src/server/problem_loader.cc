@@ -45,10 +45,8 @@ std::vector<bool> ProblemLoader::SearchProblemTable(const SQLHDBC connection, un
 }
 
 static inline std::string GenerateFetchQuery(int table_idx) {
-  std::vector<std::string> table_names = {"CUSTOMER", "LINEITEM", "NATION", "ORDERS",
-                                          "PART",     "PARTSUPP", "REGION", "SUPPLIER"};
   std::string query("select * from ");
-  return query + table_names[table_idx] + ";";
+  return query + TPCH_TABLE_NAMES[table_idx] + ";";
 }
 
 void ProblemLoader::LoadInputTables(const SQLHDBC connection, std::vector<bool> fetch_info) {

@@ -2,23 +2,17 @@
 #define EXECUTOR_TRAINER_SERVER_SOLUTION_RUNNER_H_
 
 #include "table.h"
-#include "test_result.h"
-#include <vector>
+#include <array>
 #include <functional>
+#include <vector>
 
 class SolutionRunner {
  public:
-  SolutionRunner() = default;
+ SolutionRunner() = default;
   ~SolutionRunner() = default;
 
-  void SetProblemNumber(unsigned int problem_number);
-  Table Run(const std::vector<Table> &input_tables);
-
- private:
-  using solution_type = std::function<Table(const std::vector<Table> &)>; 
-
-  solution_type solution_;
-  Table result_table_;
+  static constexpr std::size_t PROBLEM_COUNT = 5;
+  Table Run(unsigned int problem_number, const std::vector<Table> &input_tables);
 };
 
 #endif /* EXECUTOR_TRAINER_SERVER_SOLUTION_RUNNER_H_ */

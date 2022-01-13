@@ -1,85 +1,62 @@
 #include "solution_runner.h"
-#include <functional>
+#include "solutions/solutions.h"
 #include <cassert>
 
-static inline Table RunSolution1(const std::vector<Table> &input_tables) {
+template <std::size_t N>
+constexpr Table RunSolution(const std::vector<Table> &) {
+  assert(false && "Wrong problem number");
   return Table();
 }
 
-static inline Table RunSolution2(const std::vector<Table> &input_tables) {
-  return Table();
+template <>
+Table RunSolution<1>(const std::vector<Table> &input_tables) {
+  auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
+  return SolutionForProblem1(lineitem);
 }
 
-static inline Table RunSolution3(const std::vector<Table> &input_tables) {
-  return Table();
+template <>
+Table RunSolution<2>(const std::vector<Table> &input_tables) {
+  auto &orders = input_tables[TPCH_TABLE_NAME_TO_INDEX["ORDERS"]];
+  auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
+  return SolutionForProblem2(orders, lineitem);
 }
 
-static inline Table RunSolution4(const std::vector<Table> &input_tables) {
-  return Table();
+template <>
+Table RunSolution<3>(const std::vector<Table> &input_tables) {
+  auto &customer = input_tables[TPCH_TABLE_NAME_TO_INDEX["CUSTOMER"]];
+  auto &orders = input_tables[TPCH_TABLE_NAME_TO_INDEX["ORDERS"]];
+  auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
+  auto &supplier = input_tables[TPCH_TABLE_NAME_TO_INDEX["SUPPLIER"]];
+  auto &nation = input_tables[TPCH_TABLE_NAME_TO_INDEX["NATION"]];
+  auto &region = input_tables[TPCH_TABLE_NAME_TO_INDEX["REGION"]];
+  return SolutionForProblem3(customer, orders, lineitem, supplier, nation, region);
 }
 
-static inline Table RunSolution5(const std::vector<Table> &input_tables) {
-  return Table();
+template <>
+Table RunSolution<4>(const std::vector<Table> &input_tables) {
+  auto &customer = input_tables[TPCH_TABLE_NAME_TO_INDEX["CUSOTMER"]];
+  auto &orders = input_tables[TPCH_TABLE_NAME_TO_INDEX["ORDERS"]];
+  auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
+  return SolutionForProblem4(customer, orders, lineitem);
 }
 
-static inline Table RunSolution6(const std::vector<Table> &input_tables) {
-  return Table();
+template <>
+Table RunSolution<5>(const std::vector<Table> &input_tables) {
+  auto &orders = input_tables[TPCH_TABLE_NAME_TO_INDEX["ORDERS"]];
+  auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
+  return SolutionForProblem5(orders, lineitem);
 }
 
-static inline Table RunSolution7(const std::vector<Table> &input_tables) {
-  return Table();
-}
+using solution_type = std::function<Table(const std::vector<Table> &)>;
+static const std::array<solution_type, SolutionRunner::PROBLEM_COUNT> solution_array = {
+  RunSolution<1>,
+  RunSolution<2>,
+  RunSolution<3>,
+  RunSolution<4>,
+  RunSolution<5>
+};
 
-static inline Table RunSolution8(const std::vector<Table> &input_tables) {
-  return Table();
-}
-
-static inline Table RunSolution9(const std::vector<Table> &input_tables) {
-  return Table();
-}
-
-static inline Table RunSolution10(const std::vector<Table> &input_tables) {
-  return Table();
-}
-
-void SolutionRunner::SetProblemNumber(unsigned int problem_number) {
-  switch (problem_number) {
-    case 1:
-      solution_ = RunSolution1;
-      break;
-    case 2:
-      solution_ = RunSolution2;
-      break;
-    case 3:
-      solution_ = RunSolution3;
-      break;
-    case 4:
-      solution_ = RunSolution4;
-      break;
-    case 5:
-      solution_ = RunSolution5;
-      break;
-    case 6:
-      solution_ = RunSolution6;
-      break;
-    case 7:
-      solution_ = RunSolution7;
-      break;
-    case 8:
-      solution_ = RunSolution8;
-      break;
-    case 9:
-      solution_ = RunSolution9;
-      break;
-    case 10:
-      solution_ = RunSolution10;
-      break;
-    default:
-      assert(false && "No such problem");
-      break;
-  }
-}
-
-Table SolutionRunner::Run(const std::vector<Table> &input_tables) {
-  return solution_(input_tables);
+Table SolutionRunner::Run(unsigned int problem_number, const std::vector<Table> &input_tables) {
+  assert(problem_number <= PROBLEM_COUNT && "No such problem");
+  return solution_array[problem_number](input_tables);
 }

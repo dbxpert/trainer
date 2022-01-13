@@ -7,23 +7,8 @@
 static inline unsigned int GenerateRandomNumber() {
   std::random_device rd;
   std::mt19937 mersenne(rd());
-  std::uniform_int_distribution<> dist(1,10);
+  std::uniform_int_distribution<> dist(1,SolutionRunner::PROBLEM_COUNT);
   return dist(mersenne);
-}
-
-TEST(SolutionRunnerTest, set_problem_number) {
-  SolutionRunner solution_runner;
-  EXPECT_NO_FATAL_FAILURE(
-    solution_runner.SetProblemNumber(GenerateRandomNumber());
-  );
-}
-
-TEST(SolutionRunnerTest, set_wrong_problem_number) {
-  SolutionRunner solution_runner;
-  EXPECT_DEATH(
-    solution_runner.SetProblemNumber(UINT32_MAX);,
-    "No such problem"
-  );
 }
 
 static inline std::vector<Table> GenerateDummyInputTables() {
@@ -37,7 +22,15 @@ static inline std::vector<Table> GenerateDummyInputTables() {
 
 TEST(SolutionRunnerTest, run_solution) {
   SolutionRunner solution_runner;
-  solution_runner.SetProblemNumber(GenerateRandomNumber());
-  auto result = solution_runner.Run(GenerateDummyInputTables());
+  auto result = solution_runner.Run(GenerateRandomNumber(), GenerateDummyInputTables());
   EXPECT_TRUE(result.empty());
 }
+
+TEST(SolutionRunnerTest, set_wrong_problem_number) {
+  SolutionRunner solution_runner;
+  EXPECT_DEATH(
+    auto result = solution_runner.Run(UINT32_MAX, GenerateDummyInputTables());,
+    "No such problem"
+  );
+}
+

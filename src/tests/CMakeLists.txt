@@ -8,6 +8,7 @@ add_executable(${TRAINER_TEST_BINARY} ${TEST_SOURCE})
 target_link_libraries(${TRAINER_TEST_BINARY} 
   gtest_main
   server
+  solutions
   tbcli
   clialloc
   tbcliin
@@ -19,4 +20,7 @@ target_link_libraries(${TRAINER_TEST_BINARY}
   clientcommon
   env_client
 )
-target_include_directories(${TRAINER_TEST_BINARY} PUBLIC ${CMAKE_SOURCE_DIR}/src/server)
+target_include_directories(${TRAINER_TEST_BINARY} PUBLIC 
+  ${CMAKE_SOURCE_DIR}/src/server
+  ${CMAKE_SOURCE_DIR}/solutions
+)
