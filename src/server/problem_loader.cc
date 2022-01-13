@@ -4,7 +4,7 @@
 #include "problem_loader.h"
 #include "database_adapter.h"
 
-ProblemLoader::ProblemLoader() : input_tables_(TABLE_COUNT) {}
+ProblemLoader::ProblemLoader() : input_tables_(TPCH_TABLE_COUNT) {}
 
 void ProblemLoader::Load(const SQLHDBC connection, unsigned int problem_number) {
   std::vector<bool> fetch_info;

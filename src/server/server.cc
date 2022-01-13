@@ -13,11 +13,7 @@
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
-enum class Command {
-  RUN,
-  TERMINATE,
-  UNKNOWN
-};
+enum class Command { RUN, TERMINATE, UNKNOWN };
 
 static inline unsigned int SearchLineForPortNumber(const std::string &line) {
   auto pos = line.find("=");
@@ -28,16 +24,16 @@ static inline unsigned int SearchLineForPortNumber(const std::string &line) {
       return std::stol(line.substr(pos + 1));
     }
   }
- 
-  return INVALID_PORT_NUMBER;  
+
+  return INVALID_PORT_NUMBER;
 }
 
 static inline unsigned int SearchConfigForPortNumber(std::ifstream &config) {
   std::string line;
   unsigned int port_number = INVALID_PORT_NUMBER;
-  
+
   while (getline(config, line)) {
-    port_number = SearchLineForPortNumber(line);   
+    port_number = SearchLineForPortNumber(line);
   }
 
   if (port_number == INVALID_PORT_NUMBER) {
@@ -63,24 +59,20 @@ static inline unsigned int GetPortFromConfig() {
   return SearchConfigForPortNumber(config);
 }
 
-Server::Server() 
-  : running_(true),
-    socket_fd_(socket(PF_INET, SOCK_STREAM, 0)),
-    accepted_fd_(0),
-    size_(sizeof(struct sockaddr_in)) {
+Server::Server()
+    : running_(true), socket_fd_(socket(PF_INET, SOCK_STREAM, 0)), accepted_fd_(0), size_(sizeof(struct sockaddr_in)) {
   host_addr_.sin_family = AF_INET;
   host_addr_.sin_port = htons(GetPortFromConfig());
   host_addr_.sin_addr.s_addr = 0;
   memset(&(host_addr_.sin_zero), 0, 8);
   int iSetOption = 1;
 
-  setsockopt(socket_fd_, SOL_SOCKET, SO_REUSEADDR, (char*)&iSetOption,
-      sizeof(iSetOption));
+  setsockopt(socket_fd_, SOL_SOCKET, SO_REUSEADDR, (char *)&iSetOption, sizeof(iSetOption));
 }
 
 Server::~Server() {
- close(accepted_fd_);
- close(socket_fd_);
+  close(accepted_fd_);
+  close(socket_fd_);
 }
 
 void Server::Run() {
@@ -107,10 +99,10 @@ void Server::Listen() {
 
 Message Server::Receive() {
   memset(static_cast<void *>(buffer_), 0, BUF_SIZE);
-  
+
   auto recv_length = 0;
   while ((recv_length = recv(accepted_fd_, &buffer_, BUF_SIZE, 0)) == 0) {
-    if (std::strcmp(strerror(errno), "Success") == 0) 
+    if (std::strcmp(strerror(errno), "Success") == 0)
       continue;
     else {
       recv_length = -1;
@@ -175,26 +167,26 @@ static inline Command InterpretRequest(std::string request) {
     interpreted_command = Command::RUN;
   } else if (request.compare("TERMINATE")) {
     interpreted_command = Command::TERMINATE;
-  } 
+  }
 
   return interpreted_command;
 }
 
 void Server::Process(std::vector<std::string> args) {
-  auto command = InterpretRequest(args[0]); 
+  auto command = InterpretRequest(args[0]);
 
   switch (command) {
-    case Command::RUN:
-      ConnectToProblemDatabase(database_connector_);
-      Send(RunTest(database_connector_.GetConnection(), std::stol(args[1])));
-      break;
-    case Command::TERMINATE:
-      running_ = false;
-      break;
-    case Command::UNKNOWN:
-    default:
-      Send("0Server received invalid command");
-      break;
+  case Command::RUN:
+    ConnectToProblemDatabase(database_connector_);
+    Send(RunTest(database_connector_.GetConnection(), std::stol(args[1])));
+    break;
+  case Command::TERMINATE:
+    running_ = false;
+    break;
+  case Command::UNKNOWN:
+  default:
+    Send("0Server received invalid command");
+    break;
   }
 }
 
@@ -203,10 +195,10 @@ void Server::Send(std::string msg) {
   std::vector<unsigned char> byte_array;
 
   for (std::size_t i = 0; i < sizeof(int); ++i) {
-    byte_array.push_back(msg_size & 0xFF);     
+    byte_array.push_back(msg_size & 0xFF);
     msg_size >>= CHAR_BIT;
   }
-  
+
   std::string header(byte_array.begin(), byte_array.end());
 
   send(accepted_fd_, header.c_str(), header.size(), 0);

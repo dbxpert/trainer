@@ -11,7 +11,7 @@ TEST(ProblemLoaderTest, load_problem) {
   problem_loader.Load(connector.GetConnection(), 1);
   auto &input_tables = problem_loader.GetInputTables();
 
-  EXPECT_EQ(input_tables.size(), ProblemLoader::TABLE_COUNT);
+  EXPECT_EQ(input_tables.size(), TPCH_TABLE_COUNT);
 }
 
 TEST(ProblemLoaderTest, set_wrong_problem_number) {
@@ -19,7 +19,7 @@ TEST(ProblemLoaderTest, set_wrong_problem_number) {
   DatabaseConnector connector;
   connector.Connect("gtest_user", "gtest_user");
   EXPECT_DEATH(
-    problem_loader.Load(connector.GetConnection(), ProblemLoader::MAXIMUM_NUMBER + 1);,
+    problem_loader.Load(connector.GetConnection(), UINT32_MAX);,
     "No such problem"
   );
 }
