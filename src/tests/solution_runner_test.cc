@@ -1,13 +1,12 @@
 #include "gtest/gtest.h"
-#include "server/solution_runner.h"
-#include "server/table.h"
-#include "server/test_result.h"
+#include "engine/solution_runner.h"
+#include "engine/common.h"
 #include <random>
 
 static inline unsigned int GenerateRandomNumber() {
   std::random_device rd;
   std::mt19937 mersenne(rd());
-  std::uniform_int_distribution<> dist(1,SolutionRunner::PROBLEM_COUNT);
+  std::uniform_int_distribution<> dist(1, PROBLEM_COUNT);
   return dist(mersenne);
 }
 

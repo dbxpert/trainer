@@ -1,6 +1,6 @@
 #include "solutions.h"
 
-Table SolutionForProblem4(const Table &customer, const Table &orders, const Table &lineitem) {
+Table SolutionForProblem4(const Table &nation, const Table &supplier) {
   Table result;
 
   /* FILL IN */

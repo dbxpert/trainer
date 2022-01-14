@@ -3,12 +3,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # include tibero client libraries
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
+add_subdirectory(engine)
 add_subdirectory(server)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 add_executable(trainer ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cc)
 target_link_libraries(trainer
   server
+  engine
   solutions
   tbcli
   clialloc
@@ -24,6 +26,7 @@ target_link_libraries(trainer
 target_include_directories(trainer PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/server 
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/engine
   ${CMAKE_SOURCE_DIR}/solutions
 )
 

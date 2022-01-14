@@ -1,9 +1,9 @@
-#ifndef EXECUTOR_TRAINER_DATABASE_ADAPTER_H_
-#define EXECUTOR_TRAINER_DATABASE_ADAPTER_H_
+#ifndef EXECUTOR_TRAINER_ENGINE_DATABASE_ADAPTER_H_
+#define EXECUTOR_TRAINER_ENGINE_DATABASE_ADAPTER_H_
 
 #include "include/sqlcli.h"
 #include "include/sqlcli_ext.h"
-#include "table.h"
+#include "common.h"
 #include <string>
 
 class DatabaseAdapter final {
@@ -26,4 +26,4 @@ class DatabaseAdapter final {
     bool fetch_finished_ = true;
 };
 
-#endif /* EXECUTOR_TRAINER_DATABASE_ADAPTER_H_ */
+#endif /* EXECUTOR_TRAINER_ENGINE_DATABASE_ADAPTER_H_ */

@@ -1,5 +1,4 @@
 #include "server.h"
-#include "run_test.h"
 #include <algorithm> // for upper
 #include <cctype>    // for upper
 #include <climits>
@@ -7,7 +6,6 @@
 #include <cstring> // for memset
 #include <fstream> // for ifstream
 #include <iostream>
-#include <stdexcept>
 #include <termios.h>
 #include <unistd.h>
 
@@ -75,48 +73,6 @@ Server::~Server() {
   close(socket_fd_);
 }
 
-void Server::Run() {
-  Listen();
-
-  while (running_) {
-    auto msg = Receive();
-    Process(msg.GetArgs());
-  }
-}
-
-void Server::Listen() {
-  auto host_addr = reinterpret_cast<struct sockaddr *>(&host_addr_);
-  auto success = bind(socket_fd_, host_addr, sizeof(struct sockaddr));
-
-  if (success != 0)
-    std::runtime_error("Cannot bind address to the socket");
-
-  listen(socket_fd_, 3);
-
-  auto client_addr = reinterpret_cast<struct sockaddr *>(&client_addr_);
-  accepted_fd_ = accept(socket_fd_, client_addr, &size_);
-}
-
-Message Server::Receive() {
-  memset(static_cast<void *>(buffer_), 0, BUF_SIZE);
-
-  auto recv_length = 0;
-  while ((recv_length = recv(accepted_fd_, &buffer_, BUF_SIZE, 0)) == 0) {
-    if (std::strcmp(strerror(errno), "Success") == 0)
-      continue;
-    else {
-      recv_length = -1;
-      break;
-    }
-  }
-
-  if (recv_length == -1) {
-    throw std::runtime_error(std::string("Receive Error : ") + strerror(errno));
-  }
-
-  return Message(buffer_);
-}
-
 static inline void HideUserInput() {
   termios tty;
   tcgetattr(STDIN_FILENO, &tty);
@@ -159,6 +115,50 @@ static inline void ConnectToProblemDatabase(DatabaseConnector &database_connecto
   }
 }
 
+void Server::Run() {
+  ConnectToProblemDatabase(database_connector_);
+  engine_.Prepare(database_connector_.GetConnection());
+  Listen();
+
+  while (running_) {
+    auto msg = Receive();
+    Process(msg.GetArgs());
+  }
+}
+
+void Server::Listen() {
+  auto host_addr = reinterpret_cast<struct sockaddr *>(&host_addr_);
+  auto success = bind(socket_fd_, host_addr, sizeof(struct sockaddr));
+
+  if (success != 0)
+    std::runtime_error("Cannot bind address to the socket");
+
+  listen(socket_fd_, 3);
+
+  auto client_addr = reinterpret_cast<struct sockaddr *>(&client_addr_);
+  accepted_fd_ = accept(socket_fd_, client_addr, &size_);
+}
+
+Message Server::Receive() {
+  memset(static_cast<void *>(buffer_), 0, BUF_SIZE);
+
+  auto recv_length = 0;
+  while ((recv_length = recv(accepted_fd_, &buffer_, BUF_SIZE, 0)) == 0) {
+    if (std::strcmp(strerror(errno), "Success") == 0)
+      continue;
+    else {
+      recv_length = -1;
+      break;
+    }
+  }
+
+  if (recv_length == -1) {
+    throw std::runtime_error(std::string("Receive Error : ") + strerror(errno));
+  }
+
+  return Message(buffer_);
+}
+
 static inline Command InterpretRequest(std::string request) {
   std::transform(request.begin(), request.end(), request.begin(), ::toupper);
   auto interpreted_command = Command::UNKNOWN;
@@ -177,8 +177,7 @@ void Server::Process(std::vector<std::string> args) {
 
   switch (command) {
   case Command::RUN:
-    ConnectToProblemDatabase(database_connector_);
-    Send(RunTest(database_connector_.GetConnection(), std::stol(args[1])));
+    Send(engine_.Run(std::stol(args[1])));
     break;
   case Command::TERMINATE:
     running_ = false;

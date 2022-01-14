@@ -1,4 +1,4 @@
-#include "table.h"
+#include "common.h"
 
 static constexpr std::size_t CUSTOMER_TABLE_COL_CNT = 3;
 static constexpr std::size_t LINEITEM_TABLE_COL_CNT = 8;

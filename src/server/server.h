@@ -2,6 +2,7 @@
 #define EXECUTOR_TRAINER_SERVER_H_
 
 #include "database_connector.h"
+#include "engine/engine.h"
 #include "message.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -35,6 +36,7 @@ class Server {
   char buffer_[BUF_SIZE];
 
   DatabaseConnector database_connector_;
+  Engine engine_;
 };
 
 #endif /* EXECUTOR_TRAINER_SERVER_H_ */
