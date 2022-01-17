@@ -1,9 +1,10 @@
 #include "result_checker.h"
 #include "database_adapter.h"
-#include <string>
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cassert>
+#include <iostream>
+#include <string>
 
 static const std::string ANSWER_FOR_PROBLEM_1 = "select sum(l_quantity) as sum_qty, "
                                                 "sum(l_extendedprice) as sum_base_price, "
@@ -30,11 +31,13 @@ static const std::string ANSWER_FOR_PROBLEM_3 = "select revenue from "
                                                 "order by revenue desc) "
                                                 "where rownum <= 10;";
 
-static const std::string ANSWER_FOR_PROBLEM_4 = "select n_regionkey, n_nationkey, avg(s_acctbal) avg "
+static const std::string ANSWER_FOR_PROBLEM_4 = "select n_nationkey, "
+                                                "3 * (avg(s_acctbal) - median(s_acctbal)) / stddev(s_acctbal) skewness "
                                                 "from nation, supplier "
                                                 "where 1=1 "
                                                 "and s_nationkey = n_nationkey "
-                                                "group by rollup (n_regionkey, n_nationkey);";
+                                                "group by n_nationkey "
+                                                "order by n_nationkey;";
 
 static const std::string ANSWER_FOR_PROBLEM_5 = "select o_orderkey, o_totalprice from orders, lineitem "
                                                 "where o_orderkey in (select l_orderkey from lineitem "
@@ -52,7 +55,7 @@ static const std::array<std::string, PROBLEM_COUNT> ANSWER_FOR_PROBLEMS = {
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_1 = 8;
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_2 = 1;
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_3 = 1;
-static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_4 = 3;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_4 = 2;
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_5 = 2; 
 
 static const std::array<std::size_t, PROBLEM_COUNT> COLUMN_COUNT_FOR_ANSWERS = {
@@ -76,6 +79,7 @@ ResultChecker::ResultChecker() : answers_(PROBLEM_COUNT) {
 void ResultChecker::LoadAnswers(const SQLHDBC connection) {
   DatabaseAdapter adapter;  
   for (unsigned int i = 0; i < PROBLEM_COUNT; ++i) {
+    std::cout << "  " << "Loading Answer for Problem " << i + 1 << "..." << std::endl;
     adapter.SetSQL(ANSWER_FOR_PROBLEMS[i]);
     auto &dest = answers_[i];
     while (!adapter.FetchFinished()) {

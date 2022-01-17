@@ -128,9 +128,9 @@ static inline void ShowUserInput() {
   tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 }
 
-static inline std::string GetUserPassword() {
+static inline std::string GetUserPassword(const std::string &user) {
   std::string password;
-  std::cout << "Enter Password For Trainer DB: ";
+  std::cout << "Enter Password For " << user << ": ";
 
   HideUserInput();
   std::cin >> password;
@@ -142,7 +142,7 @@ static inline std::string GetUserPassword() {
 
 static inline std::string GetUserName() {
   std::string user;
-  std::cout << "Enter Username For Trainer DB: ";
+  std::cout << "Enter Username: ";
   std::cin >> user;
   return user;
 }
@@ -151,11 +151,12 @@ static inline void ConnectToProblemDatabase(DatabaseConnector &database_connecto
   std::cout << "Connecting to Trainer DB..." << std::endl;
   if (!database_connector.IsConnected()) {
     auto user = GetUserName();
-    auto password = GetUserPassword();
+    auto password = GetUserPassword(user);
     if (!database_connector.Connect(user, password))
       throw std::runtime_error("Database connection error");
   }
   std::cout << "Connected!" << std::endl;
+  std::cout << std::endl;
 }
 
 static inline Command InterpretRequest(std::string request) {
@@ -180,12 +181,14 @@ void Server::Process(std::vector<std::string> args) {
   case Command::READY:
     ConnectToProblemDatabase(database_connector_);
     engine_.Prepare(database_connector_.GetConnection());
+    Send("1");
     break;
   case Command::RUN:
     Send(engine_.Run(std::stol(args[1])));
     break;
   case Command::TERMINATE:
     running_ = false;
+    Send("1");
     break;
   case Command::UNKNOWN:
   default:

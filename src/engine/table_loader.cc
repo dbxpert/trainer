@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include "table_loader.h"
 #include "database_adapter.h"
 
@@ -13,6 +14,7 @@ void TableLoader::Load(const SQLHDBC connection) {
   DatabaseAdapter db_adapter;
 
   for (std::size_t i = 0; i < TPCH_TABLE_COUNT; ++i) {
+    std::cout << "  " << "Loading " << TPCH_TABLE_NAMES[i] << "..." << std::endl; 
     db_adapter.SetSQL(GenerateFetchQuery(i));
     
     auto &dest = input_tables_[i];

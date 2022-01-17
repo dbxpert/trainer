@@ -12,14 +12,13 @@ def get_test_choice():
     client_path = get_client_path()
     os.chdir(client_path)
 
-    test_types = list(range(1, 5))
+    test_types = list(range(1, 6))
     problems = "".join("Problem..." + str(s) + " " for s in test_types)
     p = subprocess.run(["sh", "./select_option.sh", problems])
-
-    return test_types[p.returncode - 1]
+    return str(p.returncode)
 
 def get_test_result(choice):
-    msg = choice + "\0"
+    msg = "Run," + choice + "\0"
     communicator.send_message(msg)
     reply = communicator.recv_message()
     printer.print_result(reply)

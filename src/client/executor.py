@@ -26,10 +26,10 @@ def help():
     print()
 
 def prepare_server():
-    print("SEND READY")
     communicator.send_message("Ready\0")
-    reply = communicator.recv_message()
-    print(reply)
+    communicator.recv_message()
+    print("Loading Complete!")
+    print()
 
 def start_server():
     bin_path = get_bin_path()
@@ -41,9 +41,10 @@ def build(debug):
     global context
     if context.server_connected:
         communicator.close()
-        time.sleep(1)
+        communicator.recv_message()
 
     builder.build(debug)
+    print()
     server = start_server()
 
     if not server[0]:

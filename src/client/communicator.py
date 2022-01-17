@@ -60,7 +60,7 @@ class Communicator:
                 raise_server_disconnected_error()
 
             chunks.append(msg)
-            total_received = total_received  + len(msg)
+            total_received = total_received + len(msg)
 
         return b''.join(chunks)
 

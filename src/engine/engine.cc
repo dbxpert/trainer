@@ -8,7 +8,6 @@ void Engine::Prepare(const SQLHDBC connection) {
   problem_loader_.Load(connection);
   std::cout << "Loading Answers From Trainer DB..." << std::endl;
   result_checker_.LoadAnswers(connection);
-  std::cout << "Loading Complete!" << std::endl;
 }
 
 static constexpr char ERROR_MESSAGE_HEADER = '0';
