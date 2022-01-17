@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "engine/table_loader.h"
 #include "server/database_connector.h"
-#include <random>
 
 TEST(TableLoaderTest, load_table) {
   TableLoader table_loader;

@@ -1,10 +1,14 @@
 #include "engine.h"
 #include <stdexcept>
 #include <climits>
+#include <iostream>
 
 void Engine::Prepare(const SQLHDBC connection) {
+  std::cout << "Loading Tables From Trainer DB..." << std::endl;
   problem_loader_.Load(connection);
+  std::cout << "Loading Answers From Trainer DB..." << std::endl;
   result_checker_.LoadAnswers(connection);
+  std::cout << "Loading Complete!" << std::endl;
 }
 
 static constexpr char ERROR_MESSAGE_HEADER = '0';

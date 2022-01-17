@@ -12,16 +12,16 @@ def get_test_choice():
     client_path = get_client_path()
     os.chdir(client_path)
 
-    test_types = list(range(1, 6))
-    problems = "".join("Problem-#" + str(s) + " " for s in test_types)
+    test_types = list(range(1, 5))
+    problems = "".join("Problem..." + str(s) + " " for s in test_types)
     p = subprocess.run(["sh", "./select_option.sh", problems])
 
     return test_types[p.returncode - 1]
 
-def get_test_result(comm, choice):
+def get_test_result(choice):
     msg = choice + "\0"
-    comm.send_message(msg)
-    reply = comm.recv_message()
+    communicator.send_message(msg)
+    reply = communicator.recv_message()
     printer.print_result(reply)
 
 def run_test():
@@ -31,7 +31,7 @@ def run_test():
     choice = get_test_choice()
 
     try:
-        get_test_result(communicator, choice)
+        get_test_result(choice)
     except Exception as e:
         print("Exception")
         communicator.close()

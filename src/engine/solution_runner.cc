@@ -63,8 +63,9 @@ static inline Duration GetDuration(Timestamp start) {
 Table SolutionRunner::Run(unsigned int problem_number, const std::vector<Table> &input_tables) {
   assert(problem_number <= PROBLEM_COUNT && "No such problem");
 
+  auto solution_idx = problem_number - 1;
   Timestamp start = std::chrono::system_clock::now();
-  auto result = solution_array[problem_number](input_tables);
+  auto result = solution_array[solution_idx](input_tables);
   elapsed_ = GetDuration(start).count();
 
   return result;

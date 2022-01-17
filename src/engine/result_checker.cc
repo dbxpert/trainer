@@ -19,7 +19,7 @@ static const std::string ANSWER_FOR_PROBLEM_2 = "select max(p_retailprice) from 
                                                 "where 1=1 "
                                                 "and p_partkey = ps_partkey "
                                                 "and p_size = 50 "
-                                                "and ps_supplycost <= (select avg(ps_supplycost) from partsupp;";
+                                                "and ps_supplycost <= (select avg(ps_supplycost) from partsupp);";
 
 static const std::string ANSWER_FOR_PROBLEM_3 = "select revenue from "
                                                 "(select sum(l_extendedprice * (1 - l_discount)) as revenue "
@@ -41,7 +41,7 @@ static const std::string ANSWER_FOR_PROBLEM_5 = "select o_orderkey, o_totalprice
                                                 "group by l_orderkey having sum(l_quantity) > 300) "
                                                 "and o_orderkey = l_orderkey;";
 
-static const std::array<std::string, PROBLEM_COUNT> ANSWER_SQL = {
+static const std::array<std::string, PROBLEM_COUNT> ANSWER_FOR_PROBLEMS = {
   ANSWER_FOR_PROBLEM_1,
   ANSWER_FOR_PROBLEM_2,
   ANSWER_FOR_PROBLEM_3,
@@ -49,11 +49,39 @@ static const std::array<std::string, PROBLEM_COUNT> ANSWER_SQL = {
   ANSWER_FOR_PROBLEM_5
 };
 
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_1 = 8;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_2 = 1;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_3 = 1;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_4 = 3;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_5 = 2; 
+
+static const std::array<std::size_t, PROBLEM_COUNT> COLUMN_COUNT_FOR_ANSWERS = {
+  COLUMN_COUNT_FOR_ANSWER_1,
+  COLUMN_COUNT_FOR_ANSWER_2,
+  COLUMN_COUNT_FOR_ANSWER_3,
+  COLUMN_COUNT_FOR_ANSWER_4,
+  COLUMN_COUNT_FOR_ANSWER_5
+};
+
+ResultChecker::ResultChecker() : answers_(PROBLEM_COUNT) {
+  for (std::size_t i = 0; i < PROBLEM_COUNT; ++i) {
+    auto &answer = answers_[i];
+    answer.reserve(COLUMN_COUNT_FOR_ANSWERS[i]);
+    
+    for (std::size_t i = 0; i < answer.capacity(); ++i)
+      answer[i].clear();
+  }
+}
+
 void ResultChecker::LoadAnswers(const SQLHDBC connection) {
   DatabaseAdapter adapter;  
   for (unsigned int i = 0; i < PROBLEM_COUNT; ++i) {
-    adapter.SetSQL(ANSWER_SQL[i]);
-    answers_.emplace_back(adapter.Load(connection));
+    adapter.SetSQL(ANSWER_FOR_PROBLEMS[i]);
+    auto &dest = answers_[i];
+    while (!adapter.FetchFinished()) {
+      auto result = adapter.Load(connection);
+      dest.insert(dest.begin(), result.begin(), result.end());
+    }
   }
 }
 
@@ -91,27 +119,37 @@ static inline bool CheckRowByRow(const Table &result, const Table &answer) {
   return ret;
 }
 
-static inline bool CheckSize(const Table &result, std::size_t correct_col_cnt, std::size_t correct_row_cnt) {
-  if (result.size() != correct_col_cnt)
-    return false;
-
+static inline bool CheckRowCount(const Table &result, std::size_t answer_row_cnt) {
   auto row_cnt = result[0].size();
-  if (row_cnt != correct_row_cnt)
+  if (row_cnt != answer_row_cnt)
     return false;
 
   for (auto col_iter : result) {
     if (col_iter.size() != row_cnt)
-      return false; 
+      return false;
   }
+
+  return true;
+}
+
+static inline bool CheckColumnCount(std::size_t result_col_cnt, std::size_t answer_col_cnt) {
+  return result_col_cnt == answer_col_cnt;
+}
+
+static inline bool CheckSize(const Table &result, const Table &answer) {
+  if (!CheckColumnCount(result.size(), answer.size()))
+    return false;
+
+  if (!CheckRowCount(result, answer[0].size()))
+    return false;
 
   return true;
 }
 
 bool ResultChecker::Check(unsigned int problem_number, const Table &result) {
   assert(problem_number <= PROBLEM_COUNT && "Wrong problem number");
-
   auto &answer = answers_[problem_number - 1];
-  if (!CheckSize(result, answer.size(), answer[0].size()))
+  if (!CheckSize(result, answer))
     return false;
 
   return CheckRowByRow(result, answer);

@@ -24,7 +24,13 @@ class Communicator:
         if not context.server_running:
             raise Exception("Server is not running")
 
-        self.socket.connect((self.host, self.port))
+        sleep_count = 0
+        while self.socket.connect_ex((self.host, self.port)) != 0:
+            if sleep_count > 10:
+                raise_server_disconnected_error()
+            sleep_count = sleep_count + 1
+            time.sleep(1)
+
         context.set_server_connected(True)
 
     def close(self):

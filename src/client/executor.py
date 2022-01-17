@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+import struct
 from version import product_version
 from command import Command
 from test_runner import run_test
@@ -23,6 +24,12 @@ def help():
             continue
         print(" ", command.name.lower().ljust(width), command.value)
     print()
+
+def prepare_server():
+    print("SEND READY")
+    communicator.send_message("Ready\0")
+    reply = communicator.recv_message()
+    print(reply)
 
 def start_server():
     bin_path = get_bin_path()
@@ -47,8 +54,8 @@ def build(debug):
     if context.debug:
         print("Running [PID=" + str(server[1]) + "]")
 
-    time.sleep(1)
     communicator.connect()
+    prepare_server()
 
 def quit():
     global context

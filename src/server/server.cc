@@ -11,7 +11,7 @@
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
-enum class Command { RUN, TERMINATE, UNKNOWN };
+enum class Command { READY, RUN, TERMINATE, UNKNOWN };
 
 static inline unsigned int SearchLineForPortNumber(const std::string &line) {
   auto pos = line.find("=");
@@ -72,52 +72,7 @@ Server::~Server() {
   close(accepted_fd_);
   close(socket_fd_);
 }
-
-static inline void HideUserInput() {
-  termios tty;
-  tcgetattr(STDIN_FILENO, &tty);
-  tty.c_lflag &= ~ECHO;
-  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-}
-
-static inline void ShowUserInput() {
-  termios tty;
-  tcgetattr(STDIN_FILENO, &tty);
-  tty.c_lflag |= ECHO;
-  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-}
-
-static inline std::string GetUserPassword() {
-  std::string password;
-  std::cout << "Enter Password: ";
-
-  HideUserInput();
-  std::cin >> password;
-  ShowUserInput();
-  std::cout << std::endl;
-
-  return password;
-}
-
-static inline std::string GetUserName() {
-  std::string user;
-  std::cout << "Enter Username: ";
-  std::cin >> user;
-  return user;
-}
-
-static inline void ConnectToProblemDatabase(DatabaseConnector &database_connector) {
-  if (!database_connector.IsConnected()) {
-    auto user = GetUserName();
-    auto password = GetUserPassword();
-    if (database_connector.Connect(user, password))
-      throw std::runtime_error("Database connection error");
-  }
-}
-
 void Server::Run() {
-  ConnectToProblemDatabase(database_connector_);
-  engine_.Prepare(database_connector_.GetConnection());
   Listen();
 
   while (running_) {
@@ -159,13 +114,59 @@ Message Server::Receive() {
   return Message(buffer_);
 }
 
+static inline void HideUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag &= ~ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline void ShowUserInput() {
+  termios tty;
+  tcgetattr(STDIN_FILENO, &tty);
+  tty.c_lflag |= ECHO;
+  tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+}
+
+static inline std::string GetUserPassword() {
+  std::string password;
+  std::cout << "Enter Password For Trainer DB: ";
+
+  HideUserInput();
+  std::cin >> password;
+  ShowUserInput();
+  std::cout << std::endl;
+
+  return password;
+}
+
+static inline std::string GetUserName() {
+  std::string user;
+  std::cout << "Enter Username For Trainer DB: ";
+  std::cin >> user;
+  return user;
+}
+
+static inline void ConnectToProblemDatabase(DatabaseConnector &database_connector) {
+  std::cout << "Connecting to Trainer DB..." << std::endl;
+  if (!database_connector.IsConnected()) {
+    auto user = GetUserName();
+    auto password = GetUserPassword();
+    if (!database_connector.Connect(user, password))
+      throw std::runtime_error("Database connection error");
+  }
+  std::cout << "Connected!" << std::endl;
+}
+
 static inline Command InterpretRequest(std::string request) {
   std::transform(request.begin(), request.end(), request.begin(), ::toupper);
   auto interpreted_command = Command::UNKNOWN;
 
-  if (request.compare("RUN")) {
+  if (request.compare("READY") == 0) {
+    interpreted_command = Command::READY;
+  } else if (request.compare("RUN") == 0) {
     interpreted_command = Command::RUN;
-  } else if (request.compare("TERMINATE")) {
+  } else if (request.compare("TERMINATE") == 0) {
     interpreted_command = Command::TERMINATE;
   }
 
@@ -176,6 +177,10 @@ void Server::Process(std::vector<std::string> args) {
   auto command = InterpretRequest(args[0]);
 
   switch (command) {
+  case Command::READY:
+    ConnectToProblemDatabase(database_connector_);
+    engine_.Prepare(database_connector_.GetConnection());
+    break;
   case Command::RUN:
     Send(engine_.Run(std::stol(args[1])));
     break;

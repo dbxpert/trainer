@@ -8,10 +8,15 @@
 
 class ResultChecker {
  public:
-  ResultChecker() = default;
+  ResultChecker();
   ~ResultChecker() = default;
 
   void LoadAnswers(const SQLHDBC connection);
+
+  const std::vector<Table> &GetAnswers() const {
+    return answers_;
+  }
+
   bool Check(unsigned int problem_number, const Table &result);
  
  private:

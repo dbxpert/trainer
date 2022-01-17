@@ -18,12 +18,13 @@ class DatabaseAdapter final {
     bool FetchFinished() const;
 
    private:
-    bool Execute(const char *sql, SQLHDBC hdbc);
+    void Execute(const SQLHDBC hdbc);
     Table Fetch();
 
     std::string sql_;
     SQLHSTMT hstmt_;
-    bool fetch_finished_ = true;
+    bool sql_executed_ = false;
+    bool fetching_ = false;
 };
 
 #endif /* EXECUTOR_TRAINER_ENGINE_DATABASE_ADAPTER_H_ */
