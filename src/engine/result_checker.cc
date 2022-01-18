@@ -14,16 +14,23 @@ static const std::string ANSWER_FOR_PROBLEM_1 = "select sum(l_quantity) as sum_q
                                                 "avg(l_extendedprice) as avg_price, "
                                                 "avg(l_discount) as avg_disc, "
                                                 "count(*) as count_order "
-                                                "from lineitem;";
+                                                "from lineitem "
+                                                "group by l_linenumber;";
 
-static const std::string ANSWER_FOR_PROBLEM_2 = "select max(p_retailprice) from part, partsupp "
+static const std::string ANSWER_FOR_PROBLEM_2 = "select p_partkey, max_margin from ("
+                                                "select p_partkey, max(margin) max_margin from ("
+                                                "select p_partkey, (p_retailprice - ps_supplycost) margin "
+                                                "from part, partsupp "
                                                 "where 1=1 "
-                                                "and p_partkey = ps_partkey "
+                                                "and ps_partkey = p_partkey "
                                                 "and p_size = 50 "
-                                                "and ps_supplycost <= (select avg(ps_supplycost) from partsupp);";
+                                                "and p_retailprice >= ps_supplycost) "
+                                                "group by p_partkey "
+                                                "order by max_margin desc) "
+                                                "where rownum <= 1;";
 
-static const std::string ANSWER_FOR_PROBLEM_3 = "select revenue from "
-                                                "(select sum(l_extendedprice * (1 - l_discount)) as revenue "
+static const std::string ANSWER_FOR_PROBLEM_3 = "select c_nationkey, revenue from "
+                                                "(select c_nationkey, sum(l_extendedprice * (1 - l_discount)) as revenue "
                                                 "from customer, orders, lineitem "
                                                 "where c_custkey = o_custkey "
                                                 "and l_orderkey = o_orderkey "
@@ -31,18 +38,20 @@ static const std::string ANSWER_FOR_PROBLEM_3 = "select revenue from "
                                                 "order by revenue desc) "
                                                 "where rownum <= 10;";
 
-static const std::string ANSWER_FOR_PROBLEM_4 = "select n_nationkey, "
+static const std::string ANSWER_FOR_PROBLEM_4 = "select n_regionkey, "
                                                 "3 * (avg(s_acctbal) - median(s_acctbal)) / stddev(s_acctbal) skewness "
                                                 "from nation, supplier "
                                                 "where 1=1 "
                                                 "and s_nationkey = n_nationkey "
-                                                "group by n_nationkey "
-                                                "order by n_nationkey;";
+                                                "group by n_regionkey "
+                                                "order by n_regionkey;";
 
-static const std::string ANSWER_FOR_PROBLEM_5 = "select o_orderkey, o_totalprice from orders, lineitem "
-                                                "where o_orderkey in (select l_orderkey from lineitem "
-                                                "group by l_orderkey having sum(l_quantity) > 300) "
-                                                "and o_orderkey = l_orderkey;";
+static const std::string ANSWER_FOR_PROBLEM_5 = "select l_linenumber, count(l_linenumber) count from "
+                                                "(select l_linenumber, "
+                                                "rank() over (partition by l_orderkey order by l_quantity desc) rank "
+                                                "from lineitem) "
+                                                "where rank = 1 "
+                                                "group by l_linenumber;";
 
 static const std::array<std::string, PROBLEM_COUNT> ANSWER_FOR_PROBLEMS = {
   ANSWER_FOR_PROBLEM_1,

@@ -39,9 +39,8 @@ Table RunSolution<4>(const std::vector<Table> &input_tables) {
 
 template <>
 Table RunSolution<5>(const std::vector<Table> &input_tables) {
-  auto &orders = input_tables[TPCH_TABLE_NAME_TO_INDEX["ORDERS"]];
   auto &lineitem = input_tables[TPCH_TABLE_NAME_TO_INDEX["LINEITEM"]];
-  return SolutionForProblem5(orders, lineitem);
+  return SolutionForProblem5(lineitem);
 }
 
 using solution_type = std::function<Table(const std::vector<Table> &)>;
