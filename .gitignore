@@ -5,6 +5,7 @@ tags
 build
 lib
 bin
+solutions
 
 # python
 __pycache__
