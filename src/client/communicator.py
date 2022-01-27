@@ -4,7 +4,6 @@ from config import get_config
 from runtime_context import instance as context
 
 def raise_server_disconnected_error():
-    context.set_server_connected(False)
     raise Exception("Server is disconnected")
 
 def get_msg_length(socket):
@@ -21,22 +20,17 @@ class Communicator:
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        if not context.server_running:
-            raise Exception("Server is not running")
-
-        sleep_count = 0
-        while self.socket.connect_ex((self.host, self.port)) != 0:
-            if sleep_count > 10:
-                raise_server_disconnected_error()
-            sleep_count = sleep_count + 1
-            time.sleep(1)
-
-        context.set_server_connected(True)
+        if self.socket.connect_ex((self.host, self.port)) != 0:
+            raise_server_disconnected_error()
 
     def close(self):
-        self.send_message("TERMINATE")
-        self.socket.close()
-        context.set_server_connected(False)
+        self.send_message("FIN")
+        reply = self.recv_message().decode('utf-8')
+        if reply == "ACK":
+            self.send_message("ACK")
+            self.socket.close()
+        else:
+            raise_server_disconnected_error()
 
     def send_message(self, message):
         buf = bytes(message, encoding="utf-8")

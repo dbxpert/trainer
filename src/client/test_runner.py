@@ -24,16 +24,5 @@ def get_test_result(choice):
     printer.print_result(reply)
 
 def run_test():
-    if not context.server_connected:
-        communicator.connect()
-
     choice = get_test_choice()
-
-    try:
-        get_test_result(choice)
-    except Exception as e:
-        print("Exception")
-        communicator.close()
-        raise e
-    else:
-        pass
+    get_test_result(choice)

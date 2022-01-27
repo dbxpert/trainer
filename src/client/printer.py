@@ -23,10 +23,6 @@ def print_test_result(result):
     print(test_time)
 
 def print_result(reply):
-    if not bool(reply[0]):
-        raise Exception(reply[1].decode("utf-8"))
-
-    reply = reply[1:]
     length = len(reply)
 
     if length != 9:

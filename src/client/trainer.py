@@ -2,6 +2,7 @@ from command import Command, parse_command
 from executor import run
 from version import python_version_check, product_version
 from runtime_context import instance as context
+from communicator import instance as communicator
 
 def welcome():
     python_version_check()
@@ -11,6 +12,7 @@ def welcome():
     run(Command.HELP)
 
 def main():
+    communicator.connect()
     welcome()
 
     while context.client_running:

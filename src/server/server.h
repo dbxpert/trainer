@@ -19,10 +19,11 @@ class Server {
   void Run();
 
  private:
+  void Bind();
   void Listen();
   Message Receive();
-  void Send(std::string msg);
   void Process(std::vector<std::string> args);
+  void Send(std::string msg);
 
   bool running_;
   int socket_fd_;
