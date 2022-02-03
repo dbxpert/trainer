@@ -4,6 +4,7 @@ tags
 # directories 
 build
 lib
+bin
 
 # python
 __pycache__
