@@ -1,11 +1,12 @@
 #ifndef EXECUTOR_TRAINER_ENGINE_H_
 #define EXECUTOR_TRAINER_ENGINE_H_
 
-#include "table_loader.h"
-#include "solution_runner.h"
-#include "result_checker.h"
 #include "include/sqlcli.h"
 #include "include/sqlcli_ext.h"
+#include "result_checker.h"
+#include "solution_runner.h"
+#include "table_loader.h"
+#include "table_manager.h"
 #include <string>
 
 class Engine {
@@ -17,6 +18,7 @@ class Engine {
   const std::string Run(unsigned int problem_number);
 
  private:
+  TableManager table_manager_;
   TableLoader problem_loader_;
   SolutionRunner solution_runner_;
   ResultChecker result_checker_;

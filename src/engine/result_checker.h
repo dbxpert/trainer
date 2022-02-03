@@ -13,14 +13,14 @@ class ResultChecker {
 
   void LoadAnswers(const SQLHDBC connection);
 
-  const std::vector<Table> &GetAnswers() const {
+  const std::vector<LocalTable> &GetAnswers() const {
     return answers_;
   }
 
-  bool Check(unsigned int problem_number, const Table &result);
+  bool Check(unsigned int problem_number, const LocalTable &result);
  
  private:
-  std::vector<Table> answers_;
+  std::vector<LocalTable> answers_;
 };
 
 #endif /* EXECUTOR_TRAINER_ENGINE_RESULT_CHECKER_H_ */

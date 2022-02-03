@@ -1,4 +1,4 @@
-#include "solutions.h"
+#include "framework/solutions.h"
 /** 
  * 문제 1: 제품 별 판매 통계 분석
  * 주문이 들어온 제품에 대해 아래 값을 집계하여 제출해주세요.
@@ -12,8 +12,8 @@
  * (7) 평균 할인율: avg(discount)
  * (8) 주문량 총계: count(*)
  */
-Table SolutionForProblem1(const Table &lineitem) {
-  Table result;
+ResultTable SolutionForProblem1(const Table &lineitem) {
+  ResultTable result;
 
   /* FILL IN */
 

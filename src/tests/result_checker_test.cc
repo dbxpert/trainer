@@ -15,51 +15,13 @@ TEST(ResultCheckerTest, load_answers) {
   EXPECT_EQ(answers.size(), PROBLEM_COUNT);
 }
 
-static inline unsigned int GenerateRandomNumber() {
-  std::random_device rd;
-  std::mt19937 mersenne(rd());
-  std::uniform_int_distribution<> dist(1, PROBLEM_COUNT);
-  return dist(mersenne);
-}
-
-static inline Table GetDummyResult(unsigned int problem_number) {
-  Table table;
-  std::size_t col_cnt;
-  switch (problem_number) {
-    case 1:
-      col_cnt = 8;
-      break;
-    case 2:
-      col_cnt = 1;
-      break;
-    case 3:
-      col_cnt = 1;
-      break;
-    case 4:
-      col_cnt = 3;
-      break;
-    case 5:
-      col_cnt = 2;
-      break;
-    default:
-      assert(false);
-  }
-
-  table.reserve(col_cnt);
-  for (std::size_t i = 0; i < table.capacity(); ++i)
-    table[i].clear();
-
-  return table;
-}
-
 TEST(ResultCheckerTest, check_with_answer) {
   ResultChecker result_checker;
   DatabaseConnector connector;
   connector.Connect("gtest_user", "gtest_user");
 
-  result_checker.LoadAnswers(connector.GetConnection());
-
-  auto problem_number = GenerateRandomNumber();
-  auto dummy_result = GetDummyResult(problem_number);
-  EXPECT_TRUE(result_checker.Check(problem_number, dummy_result));
+  for (std::size_t i = 0; i < PROBLEM_COUNT; ++i) {
+    auto &dummy_result = result_checker.GetAnswers()[i];
+    EXPECT_TRUE(result_checker.Check(i + 1, dummy_result));
+  }
 }

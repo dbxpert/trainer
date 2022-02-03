@@ -1,4 +1,4 @@
-#include "solutions.h"
+#include "framework/solutions.h"
 /** 
  * 문제 2: 부품 마진 분석 
  * 사이즈가 50인 부품이 필요합니다. 
@@ -7,8 +7,8 @@
  * (1) 부품 ID
  * (2) 판매가와 부품 공급가의 차액 (마진) 
  */
-Table SolutionForProblem2(const Table &part, const Table &partsupp) {
-  Table result;
+ResultTable SolutionForProblem2(const Table &part, const Table &partsupp) {
+  ResultTable result;
 
   /* FILL IN */
 

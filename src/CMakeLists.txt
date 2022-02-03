@@ -7,11 +7,10 @@ add_subdirectory(engine)
 add_subdirectory(server)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-add_executable(trainer ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cc)
-target_link_libraries(trainer
+add_executable(trsvr ${CMAKE_CURRENT_SOURCE_DIR}/server/main.cc)
+target_link_libraries(trsvr
   server
   engine
-  solutions
   tbcli
   clialloc
   tbcliin
@@ -22,12 +21,13 @@ target_link_libraries(trainer
   tbstr
   clientcommon
   env_client
+  rt
+  pthread
 )
-target_include_directories(trainer PUBLIC
+target_include_directories(trsvr PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/server 
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/engine
-  ${CMAKE_SOURCE_DIR}/solutions
 )
 
 option(BUILD_UNIT_TESTS "Build unit test" OFF)

@@ -12,6 +12,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_STANDARD 20)
 
+find_package(Boost REQUIRED)
+message(STATUS "Boost version: ${Boost_VERSION}")
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(solutions)
 add_subdirectory(src)

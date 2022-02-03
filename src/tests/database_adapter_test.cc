@@ -10,7 +10,7 @@ TEST(DatabaseAdapterTest, execute_sql) {
   connector.Connect("gtest_user", "gtest_user");
   adapter.SetSQL("SELECT 1 FROM DUAL;");
 
-  Table result;
+  LocalTable result;
   while (!adapter.FetchFinished()) {
     auto ret = adapter.Load(connector.GetConnection());
     result.insert(result.begin(), ret.begin(), ret.end());

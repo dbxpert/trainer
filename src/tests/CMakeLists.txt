@@ -1,5 +1,5 @@
-set(TRAINER_TEST_BINARY trainer_unit_test)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/tests)
+set(TRAINER_TEST_BINARY trsvr_unit_test)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 file(GLOB TEST_SOURCE_FILES *.h *.cc)
 set(TEST_SOURCE ${TEST_SOURCE_FILES})
@@ -20,6 +20,8 @@ target_link_libraries(${TRAINER_TEST_BINARY}
   tbstr
   clientcommon
   env_client
+  rt
+  pthread
 )
 target_include_directories(${TRAINER_TEST_BINARY} PUBLIC 
   ${CMAKE_SOURCE_DIR}/src/server

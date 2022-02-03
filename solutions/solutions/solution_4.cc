@@ -1,4 +1,4 @@
-#include "solutions.h"
+#include "framework/solutions.h"
 /** 
  * 문제 4: 지역 별 공급자 잔고 분포 분석
  * 지역 별 공급자의 잔고 분포를 분석하려고 합니다.
@@ -11,8 +11,8 @@
  *     - median : 중간값
  *     - std_dev : 표준편차
  */
-Table SolutionForProblem4(const Table &nation, const Table &supplier) {
-  Table result;
+ResultTable SolutionForProblem4(const Table &nation, const Table &supplier) {
+  ResultTable result;
 
   /* FILL IN */
 

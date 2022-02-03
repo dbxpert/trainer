@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "engine/solution_runner.h"
 #include "engine/common.h"
+#include "engine/table_manager.h"
 #include <random>
 
 static inline unsigned int GenerateRandomNumber() {
@@ -10,26 +11,18 @@ static inline unsigned int GenerateRandomNumber() {
   return dist(mersenne);
 }
 
-static inline std::vector<Table> GenerateDummyInputTables() {
-  std::vector<Table> input_tables(TPCH_TABLE_COUNT);
-  for (std::size_t i = 0; i < TPCH_TABLE_COUNT; ++i) {
-    auto &table = input_tables[i];
-    table.insert(table.begin(), TPCH_TABLE_COLUMN_COUNT[i], std::vector<float>());
-  }
-  return input_tables;
-}
-
 TEST(SolutionRunnerTest, run_solution) {
+  TableManager table_manager;
   SolutionRunner solution_runner;
-  auto result = solution_runner.Run(GenerateRandomNumber(), GenerateDummyInputTables());
+  auto result = solution_runner.Run(GenerateRandomNumber());
   EXPECT_TRUE(result.empty());
 }
 
 TEST(SolutionRunnerTest, set_wrong_problem_number) {
+  TableManager table_manager;
   SolutionRunner solution_runner;
   EXPECT_DEATH(
-    auto result = solution_runner.Run(UINT32_MAX, GenerateDummyInputTables());,
+    auto result = solution_runner.Run(UINT32_MAX);,
     "No such problem"
   );
 }
-

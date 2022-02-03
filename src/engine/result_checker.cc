@@ -98,7 +98,7 @@ void ResultChecker::LoadAnswers(const SQLHDBC connection) {
   }
 }
 
-static inline std::vector<unsigned int> GetSortedRowNumber(const Table &target) {
+static inline std::vector<unsigned int> GetSortedRowNumber(const LocalTable &target) {
   std::vector<unsigned int> row_number;
   for (std::size_t i = 0; i < target.size(); ++i)
     row_number.emplace_back(i);
@@ -116,7 +116,7 @@ static inline std::vector<unsigned int> GetSortedRowNumber(const Table &target) 
   return row_number;
 }
 
-static inline bool CheckRowByRow(const Table &result, const Table &answer) {
+static inline bool CheckRowByRow(const LocalTable &result, const LocalTable &answer) {
   auto sorted_rownum_for_result = GetSortedRowNumber(result);
   auto sorted_rownum_for_answer = GetSortedRowNumber(answer);
 
@@ -132,7 +132,7 @@ static inline bool CheckRowByRow(const Table &result, const Table &answer) {
   return ret;
 }
 
-static inline bool CheckRowCount(const Table &result, std::size_t answer_row_cnt) {
+static inline bool CheckRowCount(const LocalTable &result, std::size_t answer_row_cnt) {
   auto row_cnt = result[0].size();
   if (row_cnt != answer_row_cnt)
     return false;
@@ -149,7 +149,7 @@ static inline bool CheckColumnCount(std::size_t result_col_cnt, std::size_t answ
   return result_col_cnt == answer_col_cnt;
 }
 
-static inline bool CheckSize(const Table &result, const Table &answer) {
+static inline bool CheckSize(const LocalTable &result, const LocalTable &answer) {
   if (!CheckColumnCount(result.size(), answer.size()))
     return false;
 
@@ -159,7 +159,7 @@ static inline bool CheckSize(const Table &result, const Table &answer) {
   return true;
 }
 
-bool ResultChecker::Check(unsigned int problem_number, const Table &result) {
+bool ResultChecker::Check(unsigned int problem_number, const LocalTable &result) {
   assert(problem_number <= PROBLEM_COUNT && "Wrong problem number");
   auto &answer = answers_[problem_number - 1];
   if (!CheckSize(result, answer))

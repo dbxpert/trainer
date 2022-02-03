@@ -5,7 +5,7 @@
 
 void Engine::Prepare(const SQLHDBC connection) {
   std::cout << "Loading Tables From Trainer DB..." << std::endl;
-  problem_loader_.Load(connection);
+  problem_loader_.Load(connection, table_manager_);
   std::cout << "Loading Answers From Trainer DB..." << std::endl;
   result_checker_.LoadAnswers(connection);
   std::cout << "Trainer server started up" << std::endl;
@@ -24,8 +24,7 @@ static inline const std::string SerializeResult(bool success, long elapsed) {
 }
 
 const std::string Engine::Run(unsigned int problem_number) {
-  auto &input_tables = problem_loader_.GetInputTables();
-  auto result = solution_runner_.Run(problem_number, input_tables);
+  auto result = solution_runner_.Run(problem_number);
   auto success = result_checker_.Check(problem_number, result);
   return SerializeResult(success, solution_runner_.GetElapsedTime());
 }

@@ -4,24 +4,21 @@
 #include "database_adapter.h"
 
 static inline std::string GenerateFetchQuery(int table_idx); 
-static inline void InitializeDestTable(Table &dest, std::size_t table_idx);
-static inline void InsertIntoDestTable(Table &dest, Table &src, std::size_t col_cnt);
+static inline void InsertIntoDestTable(SharedTable &dest, LocalTable &src, std::size_t col_cnt);
 
-TableLoader::TableLoader() : input_tables_(TPCH_TABLE_COUNT) {}
-
-void TableLoader::Load(const SQLHDBC connection) {
+void TableLoader::Load(const SQLHDBC connection, const TableManager &table_manager) {
   DatabaseAdapter db_adapter;
 
   for (std::size_t i = 0; i < TPCH_TABLE_COUNT; ++i) {
-    std::cout << "  " << "Loading " << TPCH_TABLE_NAMES[i] << "..." << std::endl; 
+    std::cout << "  "
+              << "Loading " << TPCH_TABLE_NAMES[i] << "..." << std::endl;
     db_adapter.SetSQL(GenerateFetchQuery(i));
 
-    auto &dest = input_tables_[i];
-    InitializeDestTable(dest, i);
+    auto &dest = table_manager.GetTableReference(i);
     while (!db_adapter.FetchFinished()) {
       auto result = db_adapter.Load(connection);
       InsertIntoDestTable(dest, result, TPCH_TABLE_COLUMN_COUNT[i]);
-    } 
+    }
   }
 }
 
@@ -30,13 +27,7 @@ static inline std::string GenerateFetchQuery(int table_idx) {
   return query + TPCH_TABLE_NAMES[table_idx] + ";";
 }
 
-static inline void InitializeDestTable(Table &dest, std::size_t table_idx) {
-    auto column_count = TPCH_TABLE_COLUMN_COUNT[table_idx];
-    for (std::size_t i = 0; i < column_count; ++i)
-      dest.emplace_back();
-}
-
-static inline void InsertIntoDestTable(Table &dest, Table &src, std::size_t col_cnt) {
+static inline void InsertIntoDestTable(SharedTable &dest, LocalTable &src, std::size_t col_cnt) {
   if (src.empty())
     return;
 
