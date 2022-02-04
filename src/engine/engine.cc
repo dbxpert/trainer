@@ -8,7 +8,7 @@ void Engine::Prepare(const SQLHDBC connection) {
   problem_loader_.Load(connection, table_manager_);
   std::cout << "Loading Answers From Trainer DB..." << std::endl;
   result_checker_.LoadAnswers(connection);
-  std::cout << "Trainer server started up" << std::endl;
+  std::cout << '\n' << "Trainer server started up" << std::endl;
 }
 
 static inline const std::string SerializeResult(bool success, long elapsed) {

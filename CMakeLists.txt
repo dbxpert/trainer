@@ -16,5 +16,10 @@ find_package(Boost REQUIRED)
 message(STATUS "Boost version: ${Boost_VERSION}")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+option(BUILD_SOLUTION_ONLY "Build solution only" OFF)
+
+if (NOT BUILD_SOLUTION_ONLY)
+  add_subdirectory(src)
+endif()
 add_subdirectory(solutions)
-add_subdirectory(src)

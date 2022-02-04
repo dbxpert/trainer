@@ -9,7 +9,6 @@ target_link_libraries(${TRAINER_TEST_BINARY}
   gtest_main
   server
   engine
-  solutions
   tbcli
   clialloc
   tbcliin
@@ -26,5 +25,4 @@ target_link_libraries(${TRAINER_TEST_BINARY}
 target_include_directories(${TRAINER_TEST_BINARY} PUBLIC 
   ${CMAKE_SOURCE_DIR}/src/server
   ${CMAKE_SOURCE_DIR}/src/engine
-  ${CMAKE_SOURCE_DIR}/solutions
 )

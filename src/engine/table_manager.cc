@@ -1,6 +1,9 @@
 #include "table_manager.h"
 
-TableManager::TableManager() : shm_segment_(boost::interprocess::create_only, "TRAINER_SHM_KEY", DFLT_SHM_SIZE) {
+TableManager::TableManager() {
+  boost::interprocess::shared_memory_object::remove("TRAINER_SHM_KEY");
+  shm_segment_ = shared_memory(boost::interprocess::create_only, "TRAINER_SHM_KEY", DFLT_SHM_SIZE);
+
   for (std::size_t i = 0; i < TPCH_TABLE_COUNT; ++i) {
     AllocateTableInSharedMemory(i);
   }

@@ -22,7 +22,7 @@ int main(int argc, char **args) {
 }
 
 static inline int ParseProblemNumber(int argc, char **args) noexcept {
-  return 0;
+  return 1;
 }
 
 static inline void SendResult(const std::vector<std::vector<float>> &result, const long elapsed) {
