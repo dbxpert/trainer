@@ -26,5 +26,6 @@ static constexpr std::size_t PROBLEM_COUNT = 5;
 extern std::array<std::string, TPCH_TABLE_COUNT> TPCH_TABLE_NAMES;
 extern std::array<std::size_t, TPCH_TABLE_COUNT> TPCH_TABLE_COLUMN_COUNT;
 extern std::map<std::string, std::size_t> TPCH_TABLE_NAME_TO_INDEX;
+extern std::array<std::size_t, PROBLEM_COUNT> COLUMN_COUNT_FOR_ANSWERS; 
 
 #endif /* EXECUTOR_TRAINER_ENGINE_COMMON_H_ */

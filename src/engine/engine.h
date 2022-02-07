@@ -7,20 +7,24 @@
 #include "solution_runner.h"
 #include "table_loader.h"
 #include "table_manager.h"
+#include "common.h"
 #include <string>
+#include <memory>
 
 class Engine {
  public:
-  Engine() = default;
-  ~Engine() = default;
+  Engine();
+  ~Engine();
 
   void Prepare(const SQLHDBC connection);
   const std::string Run(unsigned int problem_number);
 
  private:
+  std::unique_ptr<shared_memory> shm_segment_;
+  
   TableManager table_manager_;
-  TableLoader problem_loader_;
   SolutionRunner solution_runner_;
+  TableLoader table_loader_;
   ResultChecker result_checker_;
 };
 

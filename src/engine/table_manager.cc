@@ -1,27 +1,29 @@
 #include "table_manager.h"
 
-TableManager::TableManager() {
-  boost::interprocess::shared_memory_object::remove("TRAINER_SHM_KEY");
-  shm_segment_ = shared_memory(boost::interprocess::create_only, "TRAINER_SHM_KEY", DFLT_SHM_SIZE);
-
+TableManager::TableManager(shared_memory &shm_segment) 
+    : shm_segment_(shm_segment) {
   for (std::size_t i = 0; i < TPCH_TABLE_COUNT; ++i) {
     AllocateTableInSharedMemory(i);
   }
 }
 
 TableManager::~TableManager() {
-  boost::interprocess::shared_memory_object::remove("TRAINER_SHM_KEY");
+  for (auto ptr : tables_)
+    shm_segment_.destroy_ptr(ptr);
 }
 
 void TableManager::AllocateTableInSharedMemory(const std::size_t table_idx) {
   auto table_name = TPCH_TABLE_NAMES[table_idx].c_str();
-  tables_[table_idx] = shm_segment_.construct<table_vector>(table_name)(shm_segment_.get_segment_manager());
-  
-  auto table = tables_[table_idx];
+
+  auto allocator = shm_segment_.get_segment_manager();
+  auto table = shm_segment_.construct<table_vector>(table_name)(allocator);
+
   auto col_cnt = TPCH_TABLE_COLUMN_COUNT[table_idx];
   for (decltype(col_cnt) i = 0; i < col_cnt; ++i) {
-    table->emplace_back(shm_segment_.get_segment_manager());
+    table->emplace_back(allocator);
   }
+  
+  tables_[table_idx] = table;
 }
 
 SharedTable &TableManager::GetTableReference(const std::size_t table_idx) const {

@@ -6,10 +6,6 @@
 #include <vector>
 #include <functional>
 
-static inline Table *GetTableFromSharedMemory(shared_memory &shm_segment, const char *name) {
-  return shm_segment.find<Table>(name).first;
-}
-
 template <std::size_t N>
 constexpr ResultTable RunSolution(shared_memory &) {
   assert(false && "Wrong problem number");
@@ -18,35 +14,35 @@ constexpr ResultTable RunSolution(shared_memory &) {
 
 template <>
 ResultTable RunSolution<1>(shared_memory &shm_segment) {
-  auto lineitem = GetTableFromSharedMemory(shm_segment, "LINEITEM"); 
+  auto lineitem = GetObjectFromSharedMemory<Table>(shm_segment, "LINEITEM"); 
   return SolutionForProblem1(*lineitem);
 }
 
 template <>
 ResultTable RunSolution<2>(shared_memory &shm_segment) {
-  auto part = GetTableFromSharedMemory(shm_segment, "PART"); 
-  auto partsupp = GetTableFromSharedMemory(shm_segment, "PARTSUPP");
+  auto part = GetObjectFromSharedMemory<Table>(shm_segment, "PART"); 
+  auto partsupp = GetObjectFromSharedMemory<Table>(shm_segment, "PARTSUPP");
   return SolutionForProblem2(*part, *partsupp);
 }
 
 template <>
 ResultTable RunSolution<3>(shared_memory &shm_segment) {
-  auto customer = GetTableFromSharedMemory(shm_segment, "CUSTOMER");
-  auto orders = GetTableFromSharedMemory(shm_segment, "ORDERS");
-  auto lineitem = GetTableFromSharedMemory(shm_segment, "LINEITEM");
+  auto customer = GetObjectFromSharedMemory<Table>(shm_segment, "CUSTOMER");
+  auto orders = GetObjectFromSharedMemory<Table>(shm_segment, "ORDERS");
+  auto lineitem = GetObjectFromSharedMemory<Table>(shm_segment, "LINEITEM");
   return SolutionForProblem3(*customer, *orders, *lineitem);
 }
 
 template <>
 ResultTable RunSolution<4>(shared_memory &shm_segment) {
-  auto nation = GetTableFromSharedMemory(shm_segment, "NATION");
-  auto supplier = GetTableFromSharedMemory(shm_segment, "SUPPLIER");
+  auto nation = GetObjectFromSharedMemory<Table>(shm_segment, "NATION");
+  auto supplier = GetObjectFromSharedMemory<Table>(shm_segment, "SUPPLIER");
   return SolutionForProblem4(*nation, *supplier);
 }
 
 template <>
 ResultTable RunSolution<5>(shared_memory &shm_segment) {
-  auto lineitem = GetTableFromSharedMemory(shm_segment, "LINEITEM");
+  auto lineitem = GetObjectFromSharedMemory<Table>(shm_segment, "LINEITEM");
   return SolutionForProblem5(*lineitem);
 }
 

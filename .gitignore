@@ -4,7 +4,7 @@ tags
 # directories 
 lib
 bin
-build
+client
 
 # python
 __pycache__

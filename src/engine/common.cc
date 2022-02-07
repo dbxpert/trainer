@@ -41,3 +41,17 @@ std::map<std::string, std::size_t> TPCH_TABLE_NAME_TO_INDEX = {
   {"REGION", 6},
   {"SUPPLIER", 7}
 };
+
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_1 = 8;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_2 = 1;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_3 = 1;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_4 = 2;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_5 = 2; 
+
+std::array<std::size_t, PROBLEM_COUNT> COLUMN_COUNT_FOR_ANSWERS = {
+  COLUMN_COUNT_FOR_ANSWER_1,
+  COLUMN_COUNT_FOR_ANSWER_2,
+  COLUMN_COUNT_FOR_ANSWER_3,
+  COLUMN_COUNT_FOR_ANSWER_4,
+  COLUMN_COUNT_FOR_ANSWER_5
+};

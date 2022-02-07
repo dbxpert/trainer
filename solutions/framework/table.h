@@ -12,4 +12,9 @@ using table_vector = boost::interprocess::vector<column_vector, table_allocator>
 
 using Table = table_vector;
 
+template <typename T>
+static inline T *GetObjectFromSharedMemory(shared_memory &shm_segment, const char *name) {
+  return shm_segment.find<T>(name).first;
+}
+
 #endif /* EXECUTOR_TRAINER_SOLUTIONS_TABLE_H_ */

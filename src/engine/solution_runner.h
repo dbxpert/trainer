@@ -5,14 +5,22 @@
 
 class SolutionRunner {
  public:
-  SolutionRunner() = default;
-  ~SolutionRunner() = default;
+  SolutionRunner(shared_memory &);
+  ~SolutionRunner();
 
-  LocalTable Run(unsigned int problem_number);
-  const long GetElapsedTime() const;
+  void Run(unsigned int problem_number);
+
+  const SharedTable &GetResultTable() const;
+  const float GetElapsedTime() const;
 
  private:
-  long elapsed_ = 0;
+  void AllocateResultTableInSharedMemory();
+  void AllocateElapsedTimeInSharedMemory();
+  void AllocateColumnsForResultTable(unsigned int problem_number);
+
+  shared_memory &shm_segment_;
+  SharedTable *result_table_;
+  long *elapsed_time_;
 };
 
 #endif /* EXECUTOR_TRAINER_ENGINE_SOLUTION_RUNNER_H_ */

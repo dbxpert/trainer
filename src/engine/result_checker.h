@@ -17,7 +17,7 @@ class ResultChecker {
     return answers_;
   }
 
-  bool Check(unsigned int problem_number, const LocalTable &result);
+  bool Check(const SharedTable &, unsigned int problem_number);
  
  private:
   std::vector<LocalTable> answers_;
