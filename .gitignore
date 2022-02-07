@@ -4,6 +4,7 @@ tags
 # directories 
 lib
 bin
+build
 client
 
 # python
