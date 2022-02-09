@@ -1,6 +1,6 @@
 class Context:
     def __init__(self):
-        self.complied = False
+        self.compiled = False
         self.debug = False
         self.client_running = True
 

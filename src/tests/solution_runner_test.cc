@@ -24,7 +24,7 @@ TEST(SolutionRunnerTest, run_solution) {
   } catch (const std::runtime_error &e) {
     /* solution이 작성되지 않은 상태에서는 solution_runner가 error를 뱉는다 */
     std::string what(e.what());
-    EXPECT_EQ(what.compare("Solution runner error occurred"), 0);
+    EXPECT_EQ(what.compare("Unexpected error occurred while running solution"), 0);
   }
   
   delete solution_runner;

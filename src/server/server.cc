@@ -9,7 +9,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-enum class Command { RUN, FIN_REQ, FIN_ACK, UNKNOWN };
+enum class Command { RUN, DEBUG, FIN_REQ, FIN_ACK, UNKNOWN };
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
@@ -95,8 +95,13 @@ void Server::Run() {
   while (true) {
     Listen();
     while (running_) {
-      auto msg = Receive();
-      Process(msg.GetArgs());
+      try {
+        auto msg = Receive();
+        Process(msg.GetArgs());
+      } catch (const std::runtime_error &e) {
+        std::string what(e.what());
+        SendError(what);
+      }
     }
   }
 }
@@ -197,7 +202,8 @@ void Server::Process(std::vector<std::string> args) {
 
   switch (command) {
   case Command::RUN:
-    Send(engine_.Run(std::stol(args[1])));
+  case Command::DEBUG:
+    SendResult(engine_.Run(std::stol(args[1]), command == Command::DEBUG));
     break;
   case Command::FIN_REQ:
     Send("ACK");
@@ -218,6 +224,8 @@ static inline Command InterpretRequest(std::string request) {
 
   if (request.compare("RUN") == 0) {
     interpreted_command = Command::RUN;
+  } else if (request.compare("DEBUG") == 0) {
+    interpreted_command = Command::DEBUG;
   } else if (request.compare("FIN") == 0) {
     interpreted_command = Command::FIN_REQ;
   } else if (request.compare("ACK") == 0) {
@@ -240,4 +248,14 @@ void Server::Send(std::string msg) {
 
   send(accepted_fd_, header.c_str(), header.size(), 0);
   send(accepted_fd_, msg.c_str(), msg.size(), 0);
+}
+
+void Server::SendResult(std::string result) {
+  std::string header = "0";
+  Send(header + result);
+}
+
+void Server::SendError(std::string error) {
+  std::string header = "1";
+  Send(header + error);
 }

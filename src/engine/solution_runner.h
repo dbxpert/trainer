@@ -9,6 +9,7 @@ class SolutionRunner {
   ~SolutionRunner();
 
   void Run(unsigned int problem_number);
+  void Debug(unsigned int problem_number);
 
   const SharedTable &GetResultTable() const;
   const float GetElapsedTime() const;

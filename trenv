@@ -22,9 +22,8 @@ alias relpath="python3 -c \"import os.path; print(os.path.relpath(os.getcwd(), '
 PS1='\[\033[01;32m\][TRAINER]:\[\033[01;34m\] `relpath`\[\033[00m\]\$ '
 alias trainer="rlwrap $trainer_root/client/trclnt"
 alias home="cd $trainer_root"
-alias dev_build="cd $trainer_root/build; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_UNIT_TESTS=On ..; cmake --build .; cd -"
+alias dev_build="cd $trainer_root/build; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_UNIT_TESTS=On -DBUILD_SOLUTION_ONLY=Off ..; cmake --build . --clean-first; cd -"
 alias clnt_build="cd $trainer_root/client; pyinstaller -F -n trclnt --distpath . $trainer_root/src/client/trainer.py; cd -"
-alias startup="cd $trainer_root/bin; ./trsvr; cd -"
 
 export LD_LIBRARY_PATH=$trainer_root/src/lib
 export TB_HOME=$trainer_root

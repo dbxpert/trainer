@@ -65,7 +65,7 @@ static inline Duration GetDuration(Timestamp start) {
 Runner::Runner(int problem_number) {
   shared_memory shm_segment(boost::interprocess::open_only, "TRAINER_SHM_KEY");
   Timestamp start = std::chrono::system_clock::now();
-  result_table_ = std::move(solution_array[problem_number](shm_segment));
+  result_table_ = std::move(solution_array[problem_number - 1](shm_segment));
   elapsed_ = GetDuration(start).count(); 
 }
 

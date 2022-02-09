@@ -24,6 +24,8 @@ class Server {
   Message Receive();
   void Process(std::vector<std::string> args);
   void Send(std::string msg);
+  void SendResult(std::string result);
+  void SendError(std::string error);
 
   bool running_;
   int socket_fd_;

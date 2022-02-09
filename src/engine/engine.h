@@ -17,7 +17,7 @@ class Engine {
   ~Engine();
 
   void Prepare(const SQLHDBC connection);
-  const std::string Run(unsigned int problem_number);
+  const std::string Run(unsigned int problem_number, const bool debug);
 
  private:
   std::unique_ptr<shared_memory> shm_segment_;

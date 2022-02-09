@@ -13,7 +13,7 @@ int main(int argc, char **args) {
 
   try {
     RunSolution(problem_number);
-  } catch (const std::runtime_error &e) {
+  } catch (const std::exception &e) {
     return -1;
   }
   

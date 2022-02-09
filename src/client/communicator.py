@@ -25,7 +25,7 @@ class Communicator:
 
     def close(self):
         self.send_message("FIN")
-        reply = self.recv_message().decode('utf-8')
+        reply = self.recv_message().decode("utf-8")
         if reply == "ACK":
             self.send_message("ACK")
             self.socket.close()

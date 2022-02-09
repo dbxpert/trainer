@@ -45,7 +45,18 @@ static inline void ExecuteSolutionRunner(unsigned int problem_number) {
   auto return_code = system(command.c_str());
 
   if (return_code != 0)
-    throw std::runtime_error("Solution runner error occurred");
+    throw std::runtime_error("Unexpected error occurred while running solution");
+}
+
+void SolutionRunner::Debug(unsigned int problem_number) {
+  auto sol_runner_path = std::string(std::getenv("TRAINER_HOME")) + "/bin/solution_runner";
+  auto problem_num_to_str = std::to_string(problem_number);
+  auto command = "cgdb --args " + sol_runner_path + " " + problem_num_to_str;
+  
+  auto return_code = system(command.c_str());
+
+  if (return_code != 0)
+    throw std::runtime_error("Unexpected error occurred while running solution");
 }
 
 const SharedTable &SolutionRunner::GetResultTable() const {

@@ -31,8 +31,11 @@ void Engine::Prepare(const SQLHDBC connection) {
   std::cout << '\n' << "Trainer server started up" << std::endl;
 }
 
-const std::string Engine::Run(unsigned int problem_number) {
-  solution_runner_.Run(problem_number);
+const std::string Engine::Run(unsigned int problem_number, const bool debug) {
+  if (debug)
+    solution_runner_.Debug(problem_number);
+  else
+    solution_runner_.Run(problem_number);
   
   auto &result_table = solution_runner_.GetResultTable();
   auto success = result_checker_.Check(result_table, problem_number);

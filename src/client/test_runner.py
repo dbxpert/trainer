@@ -18,11 +18,20 @@ def get_test_choice():
     return str(p.returncode)
 
 def get_test_result(choice):
-    msg = "Run," + choice + "\0"
+    msg = ""
+    if context.debug:
+        msg = "DEBUG,"
+    else:
+        msg = "RUN,"
+    msg = msg + choice + "\0"
+   
     communicator.send_message(msg)
     reply = communicator.recv_message()
     printer.print_result(reply)
 
 def run_test():
+    if not context.compiled:
+        raise Exception("You must compile your solution first")
+
     choice = get_test_choice()
     get_test_result(choice)

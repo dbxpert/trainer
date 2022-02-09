@@ -11,7 +11,23 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def print_test_result(result):
+def print_result(reply):
+    header = int(reply[:1])
+    if header == 0:
+        reply = reply[1:]
+        print_test_result(reply)
+    else:
+        reply = reply[1:]
+        print_error_reply(reply)
+    print()
+
+def print_test_result(reply):
+    length = len(reply)
+
+    if length != 9:
+        raise Exception("Wrong reply format")
+    
+    result = struct.unpack('q?', reply)
     user_time = float(result[0])/1000000
     success = result[1]
 
@@ -22,13 +38,7 @@ def print_test_result(result):
     print("Test Result: " + pass_fail)
     print(test_time)
 
-def print_result(reply):
-    length = len(reply)
-
-    if length != 9:
-        raise Exception("Wrong reply format")
-    
-    res_tuple = struct.unpack('q?', reply)
-    print_test_result(res_tuple)
-   
-    print()
+def print_error_reply(reply):
+    print("error reply")
+    error = reply.decode("utf-8")
+    print("Error reply from trainer server: " + error)

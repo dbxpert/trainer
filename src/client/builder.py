@@ -15,7 +15,7 @@ class Builder:
                 p = subprocess.run(["cmake", "-DCMAKE_BUILD_TYPE=Release", "-DBUILD_SOLUTION_ONLY=ON", get_project_home_path()])
                 if p.returncode != 0:
                     raise Exception("Build failed")
-            p = subprocess.run(["cmake", "--build", ".", "--clean-first"])
+            p = subprocess.run(["cmake", "--build", "."])
             if p.returncode != 0:
                 raise Exception("Build failed")
         else:
