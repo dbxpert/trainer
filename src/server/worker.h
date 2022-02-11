@@ -23,7 +23,7 @@ class Worker {
 
   const int accepted_fd_;
   bool running_;
-  Engine engine_;
+  Engine &engine_;
 };
 
 #endif /* EXECUTOR_TRAINER_WORKER_H_ */

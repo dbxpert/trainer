@@ -6,9 +6,9 @@
 #include <stdexcept>
 #include <climits>
 
-static constexpr char *RESULT_MESSAGE_HEADER = "0";
-static constexpr char *ERROR_MESSAGE_HEADER = "1";
-static constexpr char *ACK_MESSAGE = "ACK";
+static const std::string RESULT_MESSAGE_HEADER = "0";
+static const std::string ERROR_MESSAGE_HEADER = "1";
+static const std::string ACK_MESSAGE = "ACK";
 
 static inline std::string AddResultHeaderToReply(std::string message);
 static inline std::string AddErrorHeaderToReply(std::string message);
@@ -31,7 +31,7 @@ void Worker::Process<Command::RUN_SOLUTION>(const Message &message) {
 }
 
 static inline std::string AddResultHeaderToReply(std::string message) {
-  return std::string(RESULT_MESSAGE_HEADER) + message;
+  return RESULT_MESSAGE_HEADER + message;
 }
 
 template <>
@@ -109,7 +109,7 @@ void Worker::ProcessRequest(const Message &message) {
 }
 
 static inline std::string AddErrorHeaderToReply(std::string message) {
-  return std::string(ERROR_MESSAGE_HEADER) + message;
+  return ERROR_MESSAGE_HEADER + message;
 }
 
 void Worker::SendReply(std::string message) {

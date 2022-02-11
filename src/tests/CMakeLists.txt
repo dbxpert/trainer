@@ -1,4 +1,4 @@
-set(TRAINER_TEST_BINARY trsvr_unit_test)
+set(TRAINER_TEST_BINARY trtest)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 file(GLOB TEST_SOURCE_FILES *.h *.cc)

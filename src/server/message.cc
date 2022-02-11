@@ -5,7 +5,7 @@
 #include <cassert>
 
 static constexpr std::size_t MAX_COMMAND_COUNT = static_cast<std::size_t>(Command::UNKNOWN);
-static inline constexpr char *CommandToString(Command command) noexcept {
+static inline const std::string CommandToString(Command command) noexcept {
   switch (command) {
     case Command::RUN_SOLUTION:
       return "RUN_SOLUTION";
@@ -58,4 +58,12 @@ Message::Message(const char *raw_message) {
 
   command_type_ = InterpretCommandType(parsed_message[0]);
   argument_ = parsed_message.size() > 1 ? parsed_message[1] : "";
+}
+
+const Command Message::GetCommandType() const {
+  return command_type_;
+}
+
+const std::string &Message::GetCommandArgument() const {
+  return argument_;
 }

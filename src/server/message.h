@@ -1,6 +1,8 @@
 #ifndef EXECUTOR_TRAINER_MESSAGE_H_
 #define EXECUTOR_TRAINER_MESSAGE_H_
 
+#include <string>
+
 enum class Command {
   RUN_SOLUTION,
   PREPARE_DEBUG,

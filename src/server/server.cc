@@ -84,14 +84,14 @@ Server::~Server() {
 }
 
 void Server::PrepareTrainerDatabase(const std::string &username, const std::string &password) {
-  std::cout << "Connecting to Trainer DB..." << std::endl;
+  std::cout << '\n' << "Connecting to Trainer DB..." << std::endl;
 
   if (!database_connector_.Connect(username, password))
     throw std::runtime_error("Database connection error");
 
   std::cout << "Connected!" << '\n' << std::endl;
 
-  engine_.Prepare(database_connector_.GetConnection());
+  engine_.PrepareTables(database_connector_.GetConnection());
 }
 
 void Server::Run() {

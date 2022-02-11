@@ -9,7 +9,7 @@ class SolutionRunner {
   ~SolutionRunner();
 
   void Run(unsigned int problem_number);
-  void Debug(unsigned int problem_number);
+  void AllocateColumnsForResultTable(unsigned int problem_number);
 
   const SharedTable &GetResultTable() const;
   const float GetElapsedTime() const;
@@ -17,7 +17,6 @@ class SolutionRunner {
  private:
   void AllocateResultTableInSharedMemory();
   void AllocateElapsedTimeInSharedMemory();
-  void AllocateColumnsForResultTable(unsigned int problem_number);
 
   shared_memory &shm_segment_;
   SharedTable *result_table_;
