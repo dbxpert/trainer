@@ -32,9 +32,16 @@ void SolutionRunner::Run(unsigned int problem_number) {
 
 void SolutionRunner::AllocateColumnsForResultTable(unsigned int problem_number) {
   assert(problem_number <= PROBLEM_COUNT && "No such problem");
+
+  result_table_->clear();
+
   auto column_count = COLUMN_COUNT_FOR_ANSWERS[problem_number - 1];
   for (std::size_t i = 0; i < column_count; ++i)
     result_table_->emplace_back(shm_segment_.get_segment_manager());
+}
+
+void SolutionRunner::ResetElapsedTime() {
+  *elapsed_time_ = 0;
 }
 
 static inline void ExecuteSolutionRunner(unsigned int problem_number) {

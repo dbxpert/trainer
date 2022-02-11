@@ -10,6 +10,7 @@ class SolutionRunner {
 
   void Run(unsigned int problem_number);
   void AllocateColumnsForResultTable(unsigned int problem_number);
+  void ResetElapsedTime();
 
   const SharedTable &GetResultTable() const;
   const float GetElapsedTime() const;

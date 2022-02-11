@@ -21,7 +21,7 @@ def execute_debugger(choice):
     raise Exception("Prepare debug failed")
   
   os.chdir(get_bin_path())
-  p = subprocess.run(["cgdb", "--args", "trsol", "trainer/trainer1-4"])
+  p = subprocess.run(["cgdb", "--args", "trsol", choice])
  
   if p.returncode != 0:
     raise Exception("Debugger aborted abnormally")

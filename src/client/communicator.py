@@ -1,7 +1,6 @@
 import socket
 import time
 from config import get_config
-from runtime_context import instance as context
 
 def raise_server_disconnected_error():
     raise Exception("Server is disconnected")
@@ -19,9 +18,12 @@ class Communicator:
 
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        if self.socket.connect_ex((self.host, self.port)) != 0:
-            raise_server_disconnected_error()
+        count = 0
+        while self.socket.connect_ex((self.host, self.port)) != 0:
+            print("Waiting for trainer server to load" + ("." * count), end='\r')
+            count = count + 1
+            time.sleep(2)
+        print()
 
     def close(self):
         self.send_message("REQUEST_FIN")

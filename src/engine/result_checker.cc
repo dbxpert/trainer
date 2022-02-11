@@ -81,7 +81,6 @@ ResultChecker::ResultChecker() : answers_(PROBLEM_COUNT) {
 void ResultChecker::LoadAnswers(const SQLHDBC connection) {
   DatabaseAdapter adapter;  
   for (unsigned int i = 0; i < PROBLEM_COUNT; ++i) {
-    std::cout << "  " << "Loading Answer for Problem " << i + 1 << "..." << std::endl;
     adapter.SetSQL(ANSWER_FOR_PROBLEMS[i]);
     auto &dest = answers_[i];
     while (!adapter.FetchFinished()) {

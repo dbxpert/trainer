@@ -5,7 +5,6 @@
 #include "result_checker.h"
 #include <stdexcept>
 #include <climits>
-#include <iostream>
 
 /* Default shared memory size is 2G */
 static constexpr std::size_t DFLT_SHM_SIZE = 2147483648UL;
@@ -29,15 +28,13 @@ Engine::~Engine() {
 }
 
 void Engine::PrepareTables(const SQLHDBC connection) {
-  std::cout << "Loading Tables From Trainer DB..." << std::endl;
   table_loader_->Load(connection, *table_manager_);
-  std::cout << "Loading Answers From Trainer DB..." << std::endl;
   result_checker_->LoadAnswers(connection);
-  std::cout << '\n' << "Trainer server started up" << std::endl;
 }
 
 void Engine::PrepareDebug(unsigned int problem_number) {
   solution_runner_->AllocateColumnsForResultTable(problem_number);
+  solution_runner_->ResetElapsedTime();
 }
 
 const std::string Engine::RunSolution(unsigned int problem_number) {

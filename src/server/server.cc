@@ -3,7 +3,6 @@
 #include <cstdlib> // for getenv
 #include <cstring> // for memset
 #include <fstream> // for ifstream
-#include <iostream>
 
 static constexpr unsigned int INVALID_PORT_NUMBER = UINT32_MAX;
 
@@ -84,12 +83,8 @@ Server::~Server() {
 }
 
 void Server::PrepareTrainerDatabase(const std::string &username, const std::string &password) {
-  std::cout << '\n' << "Connecting to Trainer DB..." << std::endl;
-
   if (!database_connector_.Connect(username, password))
     throw std::runtime_error("Database connection error");
-
-  std::cout << "Connected!" << '\n' << std::endl;
 
   engine_.PrepareTables(database_connector_.GetConnection());
 }

@@ -14,7 +14,7 @@ static inline const std::string CommandToString(Command command) noexcept {
     case Command::VERIFY_DEBUG:
       return "VERIFY_DEBUG";
     case Command::REQUEST_FIN:
-      return "REQUEST_FIND";
+      return "REQUEST_FIN";
     case Command::ACK_FIN:
       return "ACK_FIN";
     default:
