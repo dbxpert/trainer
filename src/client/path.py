@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 def get_project_home_path():
     return os.environ['TRAINER_HOME']

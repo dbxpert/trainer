@@ -5,10 +5,13 @@ tags
 lib
 bin
 build
-client
 
 # python
 __pycache__
 
 # vscode 
 .vscode
+
+# client
+trcli
+trcli.spec

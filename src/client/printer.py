@@ -11,20 +11,27 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+class ReplyHeader:
+    size = 1
+    RESULT = 0
+    ERROR = 1
+
 def print_result(reply):
-    header = int(reply[:1])
-    if header == 0:
-        reply = reply[1:]
-        print_test_result(reply)
+    header = int(reply[:ReplyHeader.size])
+    body = reply[ReplyHeader.size:]
+
+    if header == ReplyHeader.RESULT:
+        print_test_result(body)
     else:
-        reply = reply[1:]
-        print_error_reply(reply)
+        print_error_reply(body)
+
     print()
 
 def print_test_result(reply):
     length = len(reply)
+    result_reply_length = 9
 
-    if length != 9:
+    if length != result_reply_length:
         raise Exception("Wrong reply format")
     
     result = struct.unpack('q?', reply)

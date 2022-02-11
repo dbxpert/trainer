@@ -1,6 +1,7 @@
 from version import product_version
 from command import Command
-from test_runner import run_test
+from solution_runner import run_solution
+from solution_debugger import debug_solution
 from builder import instance as builder
 from runtime_context import instance as context
 from communicator import instance as communicator
@@ -32,8 +33,8 @@ action = {
     Command.HELP : help,
     Command.VERSION : product_version,
     Command.BUILD : lambda: builder.build(False),
-    Command.DEBUG : lambda: builder.build(True),
-    Command.RUN : run_test,
+    Command.DEBUG : debug_solution,
+    Command.RUN : run_solution,
     Command.QUIT : quit
 }
 

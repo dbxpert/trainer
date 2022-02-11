@@ -24,10 +24,10 @@ class Communicator:
             raise_server_disconnected_error()
 
     def close(self):
-        self.send_message("FIN")
+        self.send_message("REQUEST_FIN")
         reply = self.recv_message().decode("utf-8")
         if reply == "ACK":
-            self.send_message("ACK")
+            self.send_message("ACK_FIN")
             self.socket.close()
         else:
             raise_server_disconnected_error()
