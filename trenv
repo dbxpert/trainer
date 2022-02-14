@@ -30,6 +30,12 @@ alias trainer="rlwrap $trainer_root/client/trcli"
 alias startup="cd $trainer_root; ./bin/trsvr trainer/trainer1-4 &"
 alias shutdown="killall -9 trsvr"
 
+function startup() {
+  cd $trainer_root
+  ./bin/trsvr trainer/trainer1-4 &
+  cd -
+}
+
 export LD_LIBRARY_PATH=$trainer_root/src/lib
 export TB_HOME=$trainer_root
 export TB_SID=tibero
