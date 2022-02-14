@@ -1,10 +1,11 @@
 #include "worker.h"
 #include "engine/engine.h"
-#include <unistd.h>
-#include <sys/socket.h>
-#include <cstring>
-#include <stdexcept>
 #include <climits>
+#include <cstring>
+#include <error.h>
+#include <stdexcept>
+#include <sys/socket.h>
+#include <unistd.h>
 
 static const std::string RESULT_MESSAGE_HEADER = "0";
 static const std::string ERROR_MESSAGE_HEADER = "1";
@@ -14,7 +15,7 @@ static inline std::string AddResultHeaderToReply(std::string message);
 static inline std::string AddErrorHeaderToReply(std::string message);
 static inline Message ReceiveMessageFromClient(const int);
 
-Worker::Worker(const int accepted_fd, Engine &engine) 
+Worker::Worker(int accepted_fd, Engine &engine) 
     : accepted_fd_(accepted_fd),
       running_(true),
       engine_(engine) {}
@@ -71,16 +72,15 @@ void Worker::Run() {
   }
 }
 
-static inline Message ReceiveMessageFromClient(const int accepted_fd) {
+static inline Message ReceiveMessageFromClient(int accepted_fd) {
   constexpr std::size_t MESSAGE_BUFFER_SIZE = 1024;
   char message_buffer[MESSAGE_BUFFER_SIZE]{};
-  
   memset(static_cast<void *>(message_buffer), 0, MESSAGE_BUFFER_SIZE);
- 
-  recv(accepted_fd, &message_buffer, MESSAGE_BUFFER_SIZE, 0);
-  
-  if (std::strcmp(strerror(errno), "Success") != 0)
+
+  ssize_t nread; 
+  if ((nread = recv(accepted_fd, &message_buffer, MESSAGE_BUFFER_SIZE, 0)) == -1) {
     throw std::runtime_error(std::string("Receive Error : ") + strerror(errno));
+  }
 
   return Message(message_buffer);
 }

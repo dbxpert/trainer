@@ -14,9 +14,7 @@ static inline unsigned int SearchLineForPortNumber(const std::string &line);
 static inline void InitializeSocket(const int socket_fd);
 
 Server::Server()
-    : socket_fd_(socket(PF_INET, SOCK_STREAM, 0)),
-      accepted_fd_(0),
-      size_(sizeof(struct sockaddr_in)) {
+    : socket_fd_(socket(PF_INET, SOCK_STREAM, 0)) {
   InitializeHostAddress(host_addr_);
   InitializeSocket(socket_fd_);
 }
@@ -73,12 +71,11 @@ static inline unsigned int SearchLineForPortNumber(const std::string &line) {
 }
 
 static inline void InitializeSocket(const int socket_fd) {
-  int iSetOption = 1;
-  setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&iSetOption, sizeof(iSetOption));
+  int option_value = 1;
+  setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&option_value, sizeof(option_value));
 }
 
 Server::~Server() {
-  close(accepted_fd_);
   close(socket_fd_);
 }
 
@@ -93,7 +90,7 @@ void Server::Run() {
   Bind();
 
   while (true) {
-    auto accepted_fd = Listen();
+    auto accepted_fd = AcceptClient();
     Worker worker(accepted_fd, engine_);
     worker.Run();
   }
@@ -109,8 +106,6 @@ void Server::Bind() {
   listen(socket_fd_, 3);
 }
 
-const int Server::Listen() {
-  auto client_addr = reinterpret_cast<struct sockaddr *>(&client_addr_);
-  auto accepted_fd = accept(socket_fd_, client_addr, &size_);
-  return accepted_fd;
+int Server::AcceptClient() const {
+  return accept(socket_fd_, nullptr, nullptr);
 }

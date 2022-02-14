@@ -21,7 +21,7 @@ class Worker {
   void ProcessRequest(const Message &);
   void SendReply(std::string msg);
 
-  const int accepted_fd_;
+  int accepted_fd_;
   bool running_;
   Engine &engine_;
 };

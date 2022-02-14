@@ -27,8 +27,8 @@ alias svr_build="cd $trainer_root/build; cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_
 alias cli_build="cd $trainer_root/client; pyinstaller -F -n trcli --distpath . $trainer_root/src/client/trainer.py; cd -"
 
 alias trainer="rlwrap $trainer_root/client/trcli"
-alias startup=". $trainer_root/bin/trsvr trainer/trainer1-4 &; cd -"
-alias shutdown="kill -9 `ps -ef | grep trsvr | cut -d " " -f 3`"
+alias startup="cd $trainer_root; ./bin/trsvr trainer/trainer1-4 &"
+alias shutdown="killall -9 trsvr"
 
 export LD_LIBRARY_PATH=$trainer_root/src/lib
 export TB_HOME=$trainer_root

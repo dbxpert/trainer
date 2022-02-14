@@ -17,14 +17,10 @@ class Server {
 
  private:
   void Bind();
-  const int Listen();
-  
-  int socket_fd_;
-  int accepted_fd_;
-  socklen_t size_;
-  struct sockaddr_in host_addr_;
-  struct sockaddr_in client_addr_;
+  int AcceptClient() const;
 
+  int socket_fd_;
+  struct sockaddr_in host_addr_;
   DatabaseConnector database_connector_;
   Engine engine_;
 };
