@@ -17,9 +17,13 @@ message(STATUS "Boost version: ${Boost_VERSION}")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-option(BUILD_SOLUTION_ONLY "Build solution only" OFF)
+option(BUILD_SOLUTION "Build solution" OFF)
+option(BUILD_SERVER "Build server" OFF)
 
-if (NOT BUILD_SOLUTION_ONLY)
+if (BUILD_SOLUTION)
+  add_subdirectory(solutions)
+endif()
+
+if (BUILD_SERVER)
   add_subdirectory(src)
 endif()
-add_subdirectory(solutions)

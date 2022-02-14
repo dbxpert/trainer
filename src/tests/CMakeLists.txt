@@ -5,10 +5,11 @@ file(GLOB TEST_SOURCE_FILES *.h *.cc)
 set(TEST_SOURCE ${TEST_SOURCE_FILES})
 
 add_executable(${TRAINER_TEST_BINARY} ${TEST_SOURCE})
-target_link_libraries(${TRAINER_TEST_BINARY} 
+target_link_directories(${TRAINER_TEST_BINARY} PRIVATE ${LIBRARY_OUTPUT_PATH})
+target_link_libraries(${TRAINER_TEST_BINARY} PRIVATE 
   gtest_main
-  server
-  engine
+  trserver
+  trengine
   tbcli
   clialloc
   tbcliin
@@ -22,7 +23,7 @@ target_link_libraries(${TRAINER_TEST_BINARY}
   rt
   pthread
 )
-target_include_directories(${TRAINER_TEST_BINARY} PUBLIC 
+target_include_directories(${TRAINER_TEST_BINARY} PRIVATE
   ${CMAKE_SOURCE_DIR}/src/server
   ${CMAKE_SOURCE_DIR}/src/engine
 )
