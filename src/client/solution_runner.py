@@ -5,7 +5,7 @@ from problems import get_problem_choice
 from builder import instance as builder
 
 def run_solution():
-    if not context.compiled:
+    if (not context.compiled) or (context.debug) :
       builder.build(False)
 
     choice = get_problem_choice()
