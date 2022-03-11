@@ -5,6 +5,7 @@
 #include "include/sqlcli.h"
 #include "include/sqlcli_ext.h"
 #include <vector>
+#include <string>
 
 class ResultChecker {
  public:
@@ -17,10 +18,15 @@ class ResultChecker {
     return answers_;
   }
 
+  const std::string GetComment() const { 
+    return comment_; 
+  }
+
   bool Check(const SharedTable &, unsigned int problem_number);
- 
+
  private:
   std::vector<LocalTable> answers_;
+  std::string comment_;
 };
 
 #endif /* EXECUTOR_TRAINER_ENGINE_RESULT_CHECKER_H_ */

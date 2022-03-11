@@ -1,5 +1,5 @@
 from version import product_version
-from command import Command
+from command import Command, Shortcut
 from solution_runner import run_solution
 from solution_debugger import debug_solution
 from builder import instance as builder
@@ -15,10 +15,14 @@ def help():
     print("Here are commands you can use:")
     print()
     width = max(len(command.name) for command in Command) + 2
-    for command in Command:
-        if command == Command.NONE or command == Command.WRONG:
-            continue
-        print(" ", command.name.lower().ljust(width), command.value)
+    print (" ", "Command".ljust(width), "Shortcut".ljust(width), "Description")
+    print ()
+    for shortcut_enum in Shortcut:
+        command_enum = Command[shortcut_enum.value]
+        command = command_enum.name.lower()
+        shortcut = shortcut_enum.name.lower()
+        desc = command_enum.value
+        print(" ", command.ljust(width), shortcut.ljust(width), desc)
     print()
 
 def quit():

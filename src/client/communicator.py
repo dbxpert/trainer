@@ -23,7 +23,6 @@ class Communicator:
             print("Waiting for trainer server to load" + ("." * count), end='\r')
             count = count + 1
             time.sleep(2)
-        print()
 
     def close(self):
         self.send_message("REQUEST_FIN")

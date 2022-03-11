@@ -43,8 +43,8 @@ std::map<std::string, std::size_t> TPCH_TABLE_NAME_TO_INDEX = {
 };
 
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_1 = 8;
-static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_2 = 1;
-static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_3 = 1;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_2 = 2;
+static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_3 = 2;
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_4 = 2;
 static constexpr std::size_t COLUMN_COUNT_FOR_ANSWER_5 = 2; 
 

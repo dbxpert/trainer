@@ -62,7 +62,6 @@ static const std::array<std::string, PROBLEM_COUNT> ANSWER_FOR_PROBLEMS = {
   ANSWER_FOR_PROBLEM_5
 };
 
-static inline bool CheckSize(const SharedTable &result, const LocalTable &answer);
 static inline bool CheckColumnCount(std::size_t result_col_cnt, std::size_t answer_col_cnt);
 static inline bool CheckRowCount(const SharedTable &result, std::size_t answer_row_cnt);
 static inline bool CheckRowByRow(const SharedTable &result, const LocalTable &answer);
@@ -94,20 +93,18 @@ void ResultChecker::LoadAnswers(const SQLHDBC connection) {
 bool ResultChecker::Check(const SharedTable &result, unsigned int problem_number) {
   assert(problem_number <= PROBLEM_COUNT && "Wrong problem number");
   auto &answer = answers_[problem_number - 1];
-  if (!CheckSize(result, answer))
+
+  if (!CheckColumnCount(result.size(), answer.size())) {
+    comment_ = "Wrong number of columns";
     return false;
+  }
+
+  if (!CheckRowCount(result, answer[0].size())) {
+    comment_ = "Wrong number of rows";
+    return false;
+  }
 
   return CheckRowByRow(result, answer);
-}
-
-static inline bool CheckSize(const SharedTable &result, const LocalTable &answer) {
-  if (!CheckColumnCount(result.size(), answer.size()))
-    return false;
-
-  if (!CheckRowCount(result, answer[0].size()))
-    return false;
-
-  return true;
 }
 
 static inline bool CheckColumnCount(std::size_t result_col_cnt, std::size_t answer_col_cnt) {
@@ -133,7 +130,7 @@ static inline bool CheckRowByRow(const SharedTable &result, const LocalTable &an
   
   auto comparator = [](const float x, const float y) {
     constexpr float acceptable_margin_of_error = 0.01;
-    auto margin_of_error = std::abs(x - y) / x;
+    auto margin_of_error = std::abs(x - y) / std::abs(x);
     return margin_of_error <= acceptable_margin_of_error;
   };
 

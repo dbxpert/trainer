@@ -28,13 +28,12 @@ def print_result(reply):
     print()
 
 def print_test_result(reply):
-    length = len(reply)
-    result_reply_length = 9
-
-    if length != result_reply_length:
-        raise Exception("Wrong reply format")
+    result_length = 9
     
-    result = struct.unpack('q?', reply)
+    result = reply[:result_length]
+    comment = reply[result_length:].decode("utf-8")
+
+    result = struct.unpack('q?', result)
     user_time = float(result[0])/1000000
     success = result[1]
 
@@ -44,6 +43,7 @@ def print_test_result(reply):
 
     print("Test Result: " + pass_fail)
     print(test_time)
+    print("Comment: " + comment)
 
 def print_error_reply(reply):
     print("error reply")

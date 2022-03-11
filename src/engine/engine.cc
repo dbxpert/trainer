@@ -5,11 +5,12 @@
 #include "result_checker.h"
 #include <stdexcept>
 #include <climits>
+#include <string>
 
 /* Default shared memory size is 2G */
 static constexpr std::size_t DFLT_SHM_SIZE = 2147483648UL;
 static inline std::unique_ptr<shared_memory> GetSharedMemorySegment();
-static inline const std::string SerializeResult(bool success, long elapsed);
+static inline const std::string SerializeResult(bool success, long elapsed, std::string comment);
 
 Engine::Engine()
     : shm_segment_(GetSharedMemorySegment()), 
@@ -45,12 +46,13 @@ const std::string Engine::RunSolution(unsigned int problem_number) {
 const std::string Engine::CheckResult(unsigned int problem_number) {
   auto &result_table = solution_runner_->GetResultTable();
   auto success = result_checker_->Check(result_table, problem_number);
-
   auto elapsed_time = solution_runner_->GetElapsedTime();
-  return SerializeResult(success, elapsed_time);
+  auto comment = result_checker_->GetComment();
+
+  return SerializeResult(success, elapsed_time, comment);
 }
 
-static inline const std::string SerializeResult(bool success, long elapsed) {
+static inline const std::string SerializeResult(bool success, long elapsed, std::string comment) {
   std::vector<unsigned char> byte_array;
 
   for (std::size_t i = 0; i < sizeof(decltype(elapsed)); ++i) {
@@ -59,5 +61,9 @@ static inline const std::string SerializeResult(bool success, long elapsed) {
   }
   byte_array.push_back(static_cast<unsigned char>(success));
 
+  for (std::size_t i = 0; i < comment.size(); ++i) {
+    byte_array.push_back(comment[i]);
+  }
+ 
   return std::string(byte_array.begin(), byte_array.end());
 }
