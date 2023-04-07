@@ -1,6 +1,6 @@
 tibero=(
-    (INSTANCE=(HOST=192.1.2.215)
-              (PORT=23933)
+    (INSTANCE=(HOST=xxx.xxx.xxx.xxx)
+              (PORT=xxxxx)
               (DB_NAME=tibero)
     )
 )
